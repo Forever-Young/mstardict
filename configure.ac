@@ -1,7 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.52)
 
-AC_INIT(mstardict, 0.2, roman.moravcik@gmail.com)
+AC_INIT(mstardict, 0.3, roman.moravcik@gmail.com)
 AC_CONFIG_SRCDIR(src/mstardict.cpp)
 
 dnl Don't include maintainer make-rules by default
@@ -33,7 +33,7 @@ AC_FUNC_MMAP
 
 AC_CHECK_LIB(z,zlibVersion,LIBS="$LIBS -lz",[AC_MSG_ERROR([zlib not found])])
 
-PKG_CHECK_MODULES(MSTARDICT, glib-2.0 >= 2.6.1 hildon-1)
+PKG_CHECK_MODULES(MSTARDICT, glib-2.0 >= 2.6.1 hildon-1 gconf-2.0 >= 2.6.2)
 
 MSTARDICT_CFLAGS="-Wall $MSTARDICT_CFLAGS"
 
