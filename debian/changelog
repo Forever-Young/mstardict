@@ -1,3 +1,11 @@
+mstardict (0.4-2) unstable; urgency=low
+
+  * Reimplemented parser.
+  * Rewritten translation window.
+  * Updated Slovak translation.
+
+ -- Roman Moravcik <roman.moravcik@gmail.com>  Mon,  8 Feb 2010 16:22:36 +0100
+
 mstardict (0.4-1) unstable; urgency=low
 
   * Fixed searching of synonyms.

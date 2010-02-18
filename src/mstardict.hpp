@@ -32,12 +32,13 @@ extern MStarDict *pMStarDict;
 
 class Conf;
 class DictMngr;
+class TransWin;
 class Library;
 class MStarDict;
 
 class MStarDict {
   private:
-    GtkWidget *main_window;
+    GtkWidget *window;
     GtkWidget *label_widget;
     GtkWidget *results_widget;
     GtkWidget *search;
@@ -45,8 +46,6 @@ class MStarDict {
     GtkWidget *results_view_scroll;
 
     GtkListStore *results_list;
-
-    TSearchResultList results;
 
     static gboolean onResultsViewSelectionChanged(GtkTreeSelection *selection,
 						  MStarDict *mStarDict);
@@ -69,14 +68,12 @@ class MStarDict {
 
     Conf *oConf;
     DictMngr *oDict;
+    TransWin *oTransWin;
     Library *oLibs;
     StarDictPlugins *oStarDictPlugins;
 
     GtkWidget *CreateLookupProgressDialog(bool *cancel);
     void DestroyLookupProgressDialog(GtkWidget *dialog);
-    void CreateTranslationWindow(const gchar *bookname,
-				 const gchar *def,
-				 const gchar *exp);
     void CreateMainWindow();
     void CreateMainMenu();
 

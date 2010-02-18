@@ -27,24 +27,13 @@
 #  include "config.h"
 #endif
 
-#include <cerrno>
-#include <cstring>
-#include <cstdlib>
-#include <cstdio>
-#include <clocale>
+#include <list>
 
 #include <glib.h>
 #include <glib/gi18n.h>
-#include <glib/gstdio.h>
 
 #include <gtk/gtk.h>
 #include <hildon/hildon.h>
-
-#include <getopt.h>
-#include <string>
-#include <vector>
-#include <memory>
-#include <list>
 
 #include "conf.hpp"
 #include "libwrapper.hpp"
@@ -185,9 +174,6 @@ DictMngr::CreateDictMngrDialog()
 	if (oStarDict->oConf->SetStringList("/apps/maemo/mstardict/dict_list", selected_dict_list)) {
 	    /* reload dictionaries */
 	    ReLoadDictionaries(selected_dict_list);
-
-//	    /* trigger re-search */
-//	    oStarDict->onSearchEntryChanged(GTK_EDITABLE(oStarDict->search), oStarDict);
 	}
     }
     gtk_widget_destroy(GTK_WIDGET(dialog));

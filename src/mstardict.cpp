@@ -49,6 +49,7 @@
 #include "conf.hpp"
 #include "dictmngr.hpp"
 #include "libwrapper.hpp"
+#include "transwin.hpp"
 #include "mstardict.hpp"
 
 MStarDict *pMStarDict;
@@ -60,7 +61,7 @@ enum {
 
 MStarDict::MStarDict()
 {
-    main_window = NULL;
+    window = NULL;
     label_widget = NULL;
     results_widget = NULL;
     results_view = NULL;
@@ -83,6 +84,9 @@ MStarDict::MStarDict()
     /* initialize dict manager */
     oDict = new DictMngr(this);
 
+    /* initialize translation window */
+    oTransWin = new TransWin(this);
+
     /* initialize stardict library */
     oLibs = new Library(this);
 }
@@ -94,6 +98,9 @@ MStarDict::~MStarDict()
 
     /* deinitialize stardict library */
     delete oLibs;
+
+    /* deinitialize translation window */
+    delete oTransWin;
 
     /* deinitialize dict manager */
     delete oDict;
@@ -111,42 +118,29 @@ MStarDict::onResultsViewSelectionChanged(GtkTreeSelection *selection,
 {
     GtkTreeModel *model;
     GtkTreeIter iter;
-    char *bookname, *def, *exp;
     const gchar *sWord;
     bool bFound = false;
 
     if (gtk_tree_selection_get_selected(selection, &model, &iter)) {
+	GList *results = NULL;
+
 	/* unselect selected rows */
 	gtk_tree_selection_unselect_all(selection);
 
 	gtk_tree_model_get(model, &iter, DEF_COLUMN, &sWord, -1);
 
-	/* clear previous search results */
-	mStarDict->results.clear();
-
 	for (size_t iLib = 0; iLib < mStarDict->oLibs->query_dictmask.size(); iLib++) {
 	    bFound =
 		mStarDict->oLibs->BuildResultData(mStarDict->oLibs->query_dictmask, sWord,
 						  mStarDict->oLibs->iCurrentIndex, iLib,
-						  mStarDict->results);
+						  &results);
 	}
 
-	bookname =
-	    g_markup_printf_escaped
-	    ("<span color=\"dimgray\" size=\"x-small\">%s</span>",
-	     mStarDict->results[0].bookname.c_str());
-	def =
-	    g_markup_printf_escaped
-	    ("<span color=\"darkred\" weight=\"heavy\" size=\"large\">%s</span>",
-	     mStarDict->results[0].def.c_str());
-	exp = g_strdup(mStarDict->results[0].exp.c_str());
-
 	/* create translation window */
-	mStarDict->CreateTranslationWindow(bookname, def, exp);
+	mStarDict->oTransWin->CreateTransWindow(results);
 
-	g_free(bookname);
-	g_free(def);
-	g_free(exp);
+	/* free result data */
+	mStarDict->oLibs->FreeResultData(results);
     }
 
     /* grab focus to search entry */
@@ -225,6 +219,9 @@ MStarDict::onDictionariesMenuItemClicked(GtkButton *button,
 					 MStarDict *mStarDict)
 {
     mStarDict->oDict->CreateDictMngrDialog();
+
+    /* trigger re-search */
+    mStarDict->onSearchEntryChanged(GTK_EDITABLE(mStarDict->search), mStarDict);
     return true;
 }
 
@@ -266,7 +263,7 @@ MStarDict::CreateLookupProgressDialog(bool *cancel)
     /* create dialog */
     dialog = gtk_dialog_new();
     gtk_window_set_title(GTK_WINDOW(dialog), _("Searching"));
-    gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(main_window));
+    gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(window));
     gtk_dialog_add_button(GTK_DIALOG(dialog), _("Cancel"), GTK_RESPONSE_OK);
 
     g_signal_connect(dialog, "response", G_CALLBACK(onLookupProgressDialogResponse), cancel);
@@ -292,47 +289,6 @@ MStarDict::DestroyLookupProgressDialog(GtkWidget *dialog)
 }
 
 void
-MStarDict::CreateTranslationWindow(const gchar *bookname,
-				   const gchar *def,
-				   const gchar *exp)
-{
-    GtkWidget *window, *alignment, *pannable, *vbox, *label;
-
-    window = hildon_stackable_window_new();
-    gtk_window_set_title(GTK_WINDOW(window), _("Translation"));
-
-    alignment = gtk_alignment_new(0.0, 0.0, 1.0, 1.0);
-    gtk_alignment_set_padding(GTK_ALIGNMENT(alignment),
-			      HILDON_MARGIN_DEFAULT,
-			      HILDON_MARGIN_DEFAULT, HILDON_MARGIN_DOUBLE, HILDON_MARGIN_DEFAULT);
-    gtk_container_add(GTK_CONTAINER(window), alignment);
-
-    pannable = hildon_pannable_area_new();
-    g_object_set(G_OBJECT(pannable), "mov-mode", HILDON_MOVEMENT_MODE_BOTH, NULL);
-    gtk_container_add(GTK_CONTAINER(alignment), pannable);
-
-    vbox = gtk_vbox_new(FALSE, 0);
-    hildon_pannable_area_add_with_viewport(HILDON_PANNABLE_AREA(pannable), vbox);
-
-    label = gtk_label_new("Bookname");
-    gtk_misc_set_alignment(GTK_MISC(label), 1.0, 0.5);
-    gtk_label_set_markup(GTK_LABEL(label), bookname);
-    gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
-
-    label = gtk_label_new("Definition");
-    gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
-    gtk_label_set_markup(GTK_LABEL(label), def);
-    gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
-
-    label = gtk_label_new("Expresion");
-    gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.0);
-    gtk_label_set_markup(GTK_LABEL(label), exp);
-    gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
-
-    gtk_widget_show_all(window);
-}
-
-void
 MStarDict::CreateMainWindow()
 {
     HildonProgram *program = NULL;
@@ -345,14 +301,14 @@ MStarDict::CreateMainWindow()
     g_set_application_name(_("MStardict"));
 
     /* main window */
-    main_window = hildon_stackable_window_new();
-    hildon_program_add_window(program, HILDON_WINDOW(main_window));
+    window = hildon_stackable_window_new();
+    hildon_program_add_window(program, HILDON_WINDOW(window));
 
     /* aligment */
     alignment = gtk_alignment_new(0.5, 0.5, 1.0, 1.0);
     gtk_alignment_set_padding(GTK_ALIGNMENT(alignment),
 			      HILDON_MARGIN_HALF, 0, HILDON_MARGIN_DEFAULT, HILDON_MARGIN_DEFAULT);
-    gtk_container_add(GTK_CONTAINER(main_window), alignment);
+    gtk_container_add(GTK_CONTAINER(window), alignment);
 
     /* main vbox */
     vbox = gtk_vbox_new(FALSE, 0);
@@ -400,11 +356,11 @@ MStarDict::CreateMainWindow()
     g_signal_connect(search, "changed", G_CALLBACK(onSearchEntryChanged), this);
 
     /* window signals */
-    g_signal_connect(G_OBJECT(main_window), "destroy", G_CALLBACK(gtk_main_quit), NULL);
-    g_signal_connect(G_OBJECT(main_window), "key_press_event", G_CALLBACK(onMainWindowKeyPressEvent), this);
+    g_signal_connect(G_OBJECT(window), "destroy", G_CALLBACK(gtk_main_quit), NULL);
+    g_signal_connect(G_OBJECT(window), "key_press_event", G_CALLBACK(onMainWindowKeyPressEvent), this);
 
     /* show all widget instead of alignment */
-    gtk_widget_show_all(GTK_WIDGET(main_window));
+    gtk_widget_show_all(GTK_WIDGET(window));
 
     /* grab focus to search entry */
     GrabFocus();
@@ -417,7 +373,7 @@ MStarDict::CreateMainMenu()
     GtkWidget *item;
 
     menu = HILDON_APP_MENU(hildon_app_menu_new());
-    hildon_window_set_app_menu(HILDON_WINDOW(main_window), menu);
+    hildon_window_set_app_menu(HILDON_WINDOW(window), menu);
 
     /* dictionaries menu item */
     item = hildon_gtk_button_new(HILDON_SIZE_AUTO);
@@ -530,9 +486,9 @@ void
 MStarDict::ShowProgressIndicator(bool bShow)
 {
     if (bShow)
-	hildon_gtk_window_set_progress_indicator(GTK_WINDOW(main_window), 1);
+	hildon_gtk_window_set_progress_indicator(GTK_WINDOW(window), 1);
     else
-	hildon_gtk_window_set_progress_indicator(GTK_WINDOW(main_window), 0);
+	hildon_gtk_window_set_progress_indicator(GTK_WINDOW(window), 0);
 }
 
 void

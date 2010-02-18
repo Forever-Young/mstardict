@@ -23,52 +23,19 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef _LIBWRAPPER_HPP_
-#define _LIBWRAPPER_HPP_
 
-#include <string>
-#include <vector>
-
-#include "file.hpp"
-#include "lib.h"
-
-struct SearchResult {
-	const gchar *bookname;
-	const gchar *def;
-	const gchar *exp;
-};
-
-using std::string;
-using std::vector;
 class MStarDict;
 
-//this class is wrapper around Dicts class for easy use
-//of it
-class Library:public Libs {
+class TransWin {
   private:
     MStarDict *oStarDict;
+    GtkWidget *window;
+
+    GtkWidget *CreateTransWidget(SearchResult *result);
 
   public:
-    Library(MStarDict *mStarDict);
-    ~Library();
+     TransWin(MStarDict *mStarDict);
+    ~TransWin();
 
-    std::vector < InstantDictIndex > query_dictmask;
-    CurrentIndex *iCurrentIndex;
-
-    void ListWords(CurrentIndex *iIndex);
-    bool BuildResultData(std::vector < InstantDictIndex > &dictmask,
-			 const char *sWord,
-			 CurrentIndex *iIndex,
-			 int iLib,
-			 GList **result_data);
-    void FreeResultData(GList *result_data);
-
-    bool SimpleLookup(const gchar *sWord,
-		      CurrentIndex *piIndex);
-    bool LookupWithFuzzy(const gchar *sWord);
-    bool LookupWithRule(const gchar *sWord);
-    bool LookupWithRegex(const gchar *sWord);
-    bool LookupData(const gchar *sWord);
+    void CreateTransWindow(GList *result_data);
 };
-
-#endif	//!_LIBWRAPPER_HPP_

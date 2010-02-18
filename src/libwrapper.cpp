@@ -27,84 +27,13 @@
 #  include "config.h"
 #endif
 
+#include <glib.h>
 #include <glib/gi18n.h>
-#include <map>
+
+#include "lib/getuint32.h"
 
 #include "libwrapper.hpp"
 #include "mstardict.hpp"
-
-static
-std::string xdxf2text(const char *p)
-{
-    std::string res;
-    for (; *p; ++p) {
-	if (*p != '<') {
-	    if (g_str_has_prefix(p, "&gt;")) {
-		res += ">";
-		p += 3;
-	    } else if (g_str_has_prefix(p, "&lt;")) {
-		res += "<";
-		p += 3;
-	    } else if (g_str_has_prefix(p, "&amp;")) {
-		res += "&";
-		p += 4;
-	    } else if (g_str_has_prefix(p, "&quot;")) {
-		res += "\"";
-		p += 5;
-	    } else
-		res += *p;
-	    continue;
-	}
-
-	const char *next = strchr(p, '>');
-	if (!next)
-	    continue;
-
-	std::string name(p + 1, next - p - 1);
-
-	if (name == "abr")
-	    res += "";
-	else if (name == "/abr")
-	    res += "";
-	else if (name == "k") {
-	    const char *begin = next;
-	    if ((next = strstr(begin, "</k>")) != NULL)
-		next += sizeof("</k>") - 1 - 1;
-	    else
-		next = begin;
-	} else if (name == "b")
-	    res += "";
-	else if (name == "/b")
-	    res += "";
-	else if (name == "i")
-	    res += "";
-	else if (name == "/i")
-	    res += "";
-	else if (name == "tr")
-	    res += "[";
-	else if (name == "/tr")
-	    res += "]";
-	else if (name == "ex")
-	    res += "";
-	else if (name == "/ex")
-	    res += "";
-	else if (!name.empty() && name[0] == 'c' && name != "co") {
-	    std::string::size_type pos = name.find("code");
-	    if (pos != std::string::size_type(-1)) {
-		pos += sizeof("code=\"") - 1;
-		std::string::size_type end_pos = name.find("\"");
-		std::string color(name, pos, end_pos - pos);
-		res += "";
-	    } else {
-		res += "";
-	    }
-	} else if (name == "/c")
-	    res += "";
-
-	p = next;
-    }
-    return res;
-}
 
 static
 string parse_data(const gchar *data,
@@ -115,9 +44,8 @@ string parse_data(const gchar *data,
 
     string mark;
     guint32 data_size, sec_size = 0;
-    gchar *m_str;
     const gchar *p = data;
-    data_size = *((guint32 *) p);
+    data_size = get_uint32(data);
     p += sizeof(guint32);
     size_t iPlugin;
     size_t nPlugins = pMStarDict->oStarDictPlugins->ParseDataPlugins.nplugins();
@@ -173,53 +101,118 @@ string parse_data(const gchar *data,
 	    continue;
 	}
 
-	switch (*p++) {
-	case 'g':
-	case 'h':
+	switch (*p) {
 	case 'm':
 	case 'l':		//need more work...
+	    p++;
 	    sec_size = strlen(p);
 	    if (sec_size) {
-		mark += "\n";
-		m_str = g_strndup(p, sec_size);
+		gchar *m_str = g_markup_escape_text(p, sec_size);
 		mark += m_str;
 		g_free(m_str);
 	    }
 	    sec_size++;
 	    break;
-	case 'x':
+	case 'g':
+	    p++;
 	    sec_size = strlen(p);
 	    if (sec_size) {
-		mark += "\n";
-		m_str = g_strndup(p, sec_size);
-		mark += xdxf2text(m_str);
-		g_free(m_str);
+		mark += p;
 	    }
 	    sec_size++;
 	    break;
+	case 'x':
+	    p++;
+	    sec_size = strlen(p) + 1;
+	    mark += _("XDXF data parsing plug-in is not found!");
+	    break;
+	case 'k':
+	    p++;
+	    sec_size = strlen(p) + 1;
+	    mark += _("PowerWord data parsing plug-in is not found!");
+	    break;
+	case 'w':
+	    p++;
+	    sec_size = strlen(p) + 1;
+	    mark += _("Wiki data parsing plug-in is not found!");
+	    break;
+	case 'h':
+	    p++;
+	    sec_size = strlen(p) + 1;
+	    mark += _("HTML data parsing plug-in is not found!");
+	    break;
+	case 'n':
+	    p++;
+	    sec_size = strlen(p) + 1;
+	    mark += _("WordNet data parsing plug-in is not found!");
+	    break;
 	case 't':
+	    p++;
 	    sec_size = strlen(p);
 	    if (sec_size) {
-		mark += "\n";
-		m_str = g_strndup(p, sec_size);
-		mark += "[" + string(m_str) + "]";
+		mark += "[<span foreground=\"blue\">";
+		gchar *m_str = g_markup_escape_text(p, sec_size);
+		mark += m_str;
 		g_free(m_str);
+		mark += "</span>]";
 	    }
 	    sec_size++;
 	    break;
 	case 'y':
+	    p++;
 	    sec_size = strlen(p);
+	    if (sec_size) {
+		mark += "[<span foreground=\"red\">";
+		gchar *m_str = g_markup_escape_text(p, sec_size);
+		mark += m_str;
+		g_free(m_str);
+		mark += "</span>]";
+	    }
 	    sec_size++;
 	    break;
 	case 'W':
-	case 'P':
-	    sec_size = *((guint32 *) p);
+	    p++;
+	    sec_size = g_ntohl(get_uint32(p));
+	    //enbale sound button.
 	    sec_size += sizeof(guint32);
+	    break;
+	case 'P':
+	    {
+		p++;
+		sec_size = g_ntohl(get_uint32(p));
+		if (sec_size) {
+		    GdkPixbufLoader *loader = gdk_pixbuf_loader_new();
+		    gdk_pixbuf_loader_write(loader, (const guchar *) (p + sizeof(guint32)), sec_size, NULL);
+		    gdk_pixbuf_loader_close(loader, NULL);
+		    GdkPixbuf *pixbuf = gdk_pixbuf_loader_get_pixbuf(loader);
+		    if (pixbuf) {
+//			append_and_mark_orig_word(mark, real_oword, LinksPosList());
+//			mark.clear();
+//			append_pixbuf(pixbuf);
+		    } else {
+		        mark += _("<span foreground=\"red\">[Load image error!]</span>");
+		    }
+		    g_object_unref(loader);
+		} else {
+		    mark += _("<span foreground=\"red\">[Missing Image]</span>");
+		}
+		sec_size += sizeof(guint32);
+	    }
+	    break;
+	default:
+	    if (g_ascii_isupper(*p)) {
+		p++;
+		sec_size = g_ntohl(get_uint32(p));
+		sec_size += sizeof(guint32);
+	    } else {
+		p++;
+		sec_size = strlen(p) + 1;
+	    }
+	    mark += _("Unknown data type");
 	    break;
 	}
 	p += sec_size;
     }
-
     return mark;
 }
 
@@ -254,12 +247,13 @@ Library::BuildResultData(std::vector < InstantDictIndex > &dictmask,
 			 const char *sWord,
 			 CurrentIndex *iIndex,
 			 int iLib,
-			 TSearchResultList &res_list)
+			 GList **result_data)
 {
     int iRealLib;
     bool bFound = false, bLookupWord = false, bLookupSynonymWord = false;
     gint nWord = 0, count = 0, i = 0, j = 0;
     glong iWordIdx;
+    struct SearchResult *result;
 
     iRealLib = dictmask[iLib].index;
 
@@ -292,10 +286,11 @@ Library::BuildResultData(std::vector < InstantDictIndex > &dictmask,
 	if (bLookupWord) {
 	    count = GetOrigWordCount(iIndex[iLib].idx, iRealLib, true);
 	    for (i = 0; i < count; i++) {
-		res_list.push_back(TSearchResult(dict_name(iLib),
-						 poGetOrigWord(iIndex[iLib].idx, iRealLib),
-						 parse_data(poGetOrigWordData(iIndex[iLib].idx + i, iRealLib),
-							    poGetOrigWord(iIndex[iLib].idx, iRealLib))));
+		result = (SearchResult *) g_malloc(sizeof(struct SearchResult));
+		result->bookname = g_strdup(dict_name(iLib).c_str());
+		result->def = g_strdup(poGetOrigWord(iIndex[iLib].idx, iRealLib));
+		result->exp = g_strdup(parse_data(poGetOrigWordData(iIndex[iLib].idx + i, iRealLib), poGetOrigWord(iIndex[iLib].idx, iRealLib)).c_str());
+		*result_data = g_list_append(*result_data, result);
 	    }
 	    i = 1;
 	} else {
@@ -303,10 +298,11 @@ Library::BuildResultData(std::vector < InstantDictIndex > &dictmask,
 	}
 	for (j = 0; i < nWord; i++, j++) {
 	    iWordIdx = poGetOrigSynonymWordIdx(iIndex[iLib].synidx + j, iRealLib);
-	    res_list.push_back(TSearchResult(dict_name(iLib),
-					     poGetOrigWord(iWordIdx, iRealLib),
-					     parse_data(poGetOrigWordData(iWordIdx, iRealLib),
-							poGetOrigWord(iWordIdx, iRealLib))));
+	    result = (SearchResult *) g_malloc(sizeof(struct SearchResult));
+	    result->bookname = g_strdup(dict_name(iLib).c_str());
+	    result->def = g_strdup(poGetOrigWord(iWordIdx, iRealLib));
+	    result->exp = g_strdup(parse_data(poGetOrigWordData(iWordIdx, iRealLib), poGetOrigWord(iWordIdx, iRealLib)).c_str());
+	    *result_data = g_list_append(*result_data, result);
 	}
 
 	bFound = true;
@@ -315,12 +311,17 @@ Library::BuildResultData(std::vector < InstantDictIndex > &dictmask,
     return bFound;
 }
 
+void
+Library::FreeResultData(GList *result_data)
+{
+}
+
 bool
 Library::SimpleLookup(const gchar *sWord,
 		      CurrentIndex *piIndex)
 {
     CurrentIndex *iIndex;
-    TSearchResultList results;
+    GList *results = NULL;
     bool bFound = false;
 
     if (!piIndex)
@@ -329,9 +330,11 @@ Library::SimpleLookup(const gchar *sWord,
 	iIndex = piIndex;
 
     for (size_t iLib = 0; iLib < query_dictmask.size(); iLib++) {
-	if (BuildResultData(query_dictmask, sWord, iIndex, iLib, results))
+	if (BuildResultData(query_dictmask, sWord, iIndex, iLib, &results))
 	    bFound = true;
     }
+
+    FreeResultData(results);
 
     if (!piIndex)
 	g_free(iIndex);

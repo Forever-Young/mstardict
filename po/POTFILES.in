@@ -1,2 +1,5 @@
 # Package source files
+src/dictmngr.cpp
+src/libwrapper.cpp
 src/mstardict.cpp
+src/transwin.cpp
