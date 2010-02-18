@@ -43,33 +43,26 @@
 #include "file.hpp"
 #include "mstardict.hpp"
 
+MStarDict *pMStarDict;
+
 enum {
-	INDEX_COLUMN = 0,
-	BOOKNAME_COLUMN,
 	DEF_COLUMN,
 	N_COLUMNS
 };
-
 
 MStarDict::MStarDict ()
 {
 	label_widget = NULL;
 	results_widget = NULL;
 	results_view = NULL;
+	results_view_scroll = NULL;
 
 	/* create list of ressults */
 	results_list = gtk_list_store_new (N_COLUMNS,
-					   G_TYPE_INT,		/* INDEX_COLUMN */
-					   G_TYPE_STRING,	/* BOOKNAME_COLUMN */
 					   G_TYPE_STRING);	/* DEF_COLUMN */
 
-	/* set sorting of resuslts */
-	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (results_list),
-					      DEF_COLUMN,
-					      GTK_SORT_ASCENDING);
-
 	/* initialize stardict library */
-	lib = new Library (true, true);
+	oLibs = new Library ();
 }
 
 MStarDict::~MStarDict ()
@@ -78,31 +71,44 @@ MStarDict::~MStarDict ()
 	g_object_unref (results_list);
 
 	/* deinitialize stardict library */
-	delete lib;
+	delete oLibs;
 }
 
 gboolean
-MStarDict::on_results_view_selection_changed (GtkTreeSelection *selection,
+MStarDict::onResultsViewSelectionChanged (GtkTreeSelection *selection,
 					      MStarDict *mStarDict)
 {
 	GtkTreeModel *model;
 	GtkTreeIter iter;
 	char *bookname, *def, *exp;
-	gint selected = 0;
+	const gchar *sWord;
+	bool bFound = false;
 
 	if (gtk_tree_selection_get_selected (selection, &model, &iter)) {
 		/* unselect selected rows */
 		gtk_tree_selection_unselect_all (selection);
-		gtk_tree_model_get (model, &iter, INDEX_COLUMN, &selected, -1);
+
+		gtk_tree_model_get (model, &iter, DEF_COLUMN, &sWord, -1);
+
+		/* clear previous search results */
+		mStarDict->results.clear();
+
+		for (size_t iLib=0; iLib<mStarDict->oLibs->query_dictmask.size(); iLib++) {
+			bFound = mStarDict->oLibs->BuildResultData(mStarDict->oLibs->query_dictmask,
+								   sWord,
+								   mStarDict->oLibs->iCurrentIndex,
+								   iLib,
+								   mStarDict->results);
+		}
 
 		bookname = g_markup_printf_escaped ("<span color=\"dimgray\" size=\"x-small\">%s</span>",
-						    mStarDict->result_list[selected].bookname.c_str());
+						    mStarDict->results[0].bookname.c_str());
 		def = g_markup_printf_escaped ("<span color=\"darkred\" weight=\"heavy\" size=\"large\">%s</span>",
-					       mStarDict->result_list[selected].def.c_str());
-		exp = g_strdup (mStarDict->result_list[selected].exp.c_str());
+					       mStarDict->results[0].def.c_str());
+		exp = g_strdup (mStarDict->results[0].exp.c_str());
 
 		/* create translation window */
-		mStarDict->create_translation_window (bookname, def, exp);
+		mStarDict->CreateTranslationWindow (bookname, def, exp);
 
 		g_free (bookname);
 		g_free (def);
@@ -116,43 +122,52 @@ MStarDict::on_results_view_selection_changed (GtkTreeSelection *selection,
 }
 
 gboolean
-MStarDict::on_search_entry_changed (GtkEditable *editable,
+MStarDict::onSearchEntryChanged (GtkEditable *editable,
 				    MStarDict *mStarDict)
 {
 	GtkTreeSelection *selection;
-	const gchar *search;
-	GtkTreeIter iter;
+	const gchar *sWord;
+	bool bFound = false;
+	std::string query;
 
-	search = gtk_entry_get_text (GTK_ENTRY (editable));
+	sWord = gtk_entry_get_text (GTK_ENTRY (editable));
 
-	if (strcmp (search, "") == 0) {
+	if (strcmp (sWord, "") == 0) {
 		gtk_widget_show (mStarDict->label_widget);
 		gtk_widget_hide (mStarDict->results_widget);
 	} else {
 		selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (mStarDict->results_view));
 		gtk_tree_selection_set_mode (selection, GTK_SELECTION_NONE);
 
-		/* clear previous search results */
-		mStarDict->result_list.clear();
-		gtk_list_store_clear (mStarDict->results_list);
-
 		/* unselect rows */
 		selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (mStarDict->results_view));
 		gtk_tree_selection_unselect_all (selection);
 
-		/* fill list with new results */
-		mStarDict->lib->process_phrase(search, mStarDict->result_list);
-		if (!mStarDict->result_list.empty()) {
-			for (size_t i = 0; i < mStarDict->result_list.size(); ++i) {
-				gtk_list_store_append (mStarDict->results_list, &iter);
-				gtk_list_store_set (mStarDict->results_list,
-						    &iter,
-						    INDEX_COLUMN, i,
-						    BOOKNAME_COLUMN, mStarDict->result_list[i].bookname.c_str(),
-						    DEF_COLUMN, mStarDict->result_list[i].def.c_str(),
-						    -1);
+		switch (analyse_query(sWord, query)) {
+			case qtFUZZY:
+				g_debug ("FUZZY");
+//				oLibs->LookupWithFuzzy(query, res_list);
+				break;
+			case qtREGEX:
+				g_debug ("REGEX");
+//				oLibs->LookupWithRule(query, res_list);
+				break;
+			case qtSIMPLE:
+				g_debug ("SIMPLE");
+				bFound = mStarDict->oLibs->SimpleLookup(sWord, mStarDict->oLibs->iCurrentIndex);
+				if (!bFound) {
+					/* suggested */
+				}
+				mStarDict->oLibs->ListWords(mStarDict->oLibs->iCurrentIndex);
+				break;
+			case qtDATA:
+				g_debug ("DATA");
+//				oLibs->LookupData(query, res_list);
+				break;
+			default:
+				g_debug ("DEFAULT");
+				/*nothing*/;
 			}
-		}
 
 		/* unselect selected rows */
 		gtk_tree_selection_unselect_all (selection);
@@ -177,7 +192,7 @@ private:
 };
 
 void
-MStarDict::load_dictionaries ()
+MStarDict::LoadDictionaries ()
 {
 	strlist_t dicts_dir_list;
 	strlist_t order_list;
@@ -189,22 +204,27 @@ MStarDict::load_dictionaries ()
 	dicts_dir_list.push_back (std::string ("/home/user/MyDocs/mstardict"));
 
 	for_each_file(dicts_dir_list, ".ifo", order_list, disable_list, GetAllDictList(load_list));
-	lib->load(load_list);
+	oLibs->load(load_list);
 
-	lib->query_dictmask.clear();
+	oLibs->query_dictmask.clear();
 	for (std::list<std::string>::iterator i = load_list.begin(); i != load_list.end(); ++i) {
 		size_t iLib;
-		if (lib->find_lib_by_filename(i->c_str(), iLib)) {
+		if (oLibs->find_lib_by_filename(i->c_str(), iLib)) {
 			InstantDictIndex instance_dict_index;
 			instance_dict_index.type = InstantDictType_LOCAL;
 			instance_dict_index.index = iLib;
-			lib->query_dictmask.push_back(instance_dict_index);
+			oLibs->query_dictmask.push_back(instance_dict_index);
 		}
 	}
+
+	if (oLibs->iCurrentIndex)
+		g_free (oLibs->iCurrentIndex);
+	oLibs->iCurrentIndex = (CurrentIndex *)g_malloc(sizeof(CurrentIndex) * oLibs->query_dictmask.size());
+
 }
 
 void
-MStarDict::create_translation_window (const gchar *bookname,
+MStarDict::CreateTranslationWindow (const gchar *bookname,
 				      const gchar *def,
 				      const gchar *exp)
 {
@@ -249,13 +269,12 @@ MStarDict::create_translation_window (const gchar *bookname,
 }
 
 void
-MStarDict::create_main_window ()
+MStarDict::CreateMainWindow ()
 {
 	HildonProgram *program = NULL;
-	GtkWidget *window, *alignment, *vbox, *pannable;
+	GtkWidget *window, *alignment, *vbox;
 	GtkCellRenderer *renderer;
 	GtkTreeSelection *selection;
-	GdkColor style_color;
 
 	/* hildon program */
 	program = hildon_program_get_instance ();
@@ -295,18 +314,18 @@ MStarDict::create_main_window ()
 	gtk_box_pack_start (GTK_BOX (vbox), results_widget, TRUE, TRUE, 0);
 
 	/* pannable for tree view */
-	pannable = hildon_pannable_area_new ();
-	gtk_container_add (GTK_CONTAINER (results_widget), pannable);
+	results_view_scroll = hildon_pannable_area_new ();
+	gtk_container_add (GTK_CONTAINER (results_widget), results_view_scroll);
 
 	/* result tree view */
 	results_view = hildon_gtk_tree_view_new (HILDON_UI_MODE_EDIT);
 	gtk_tree_view_set_model (GTK_TREE_VIEW (results_view),
 				 GTK_TREE_MODEL (results_list));
-	gtk_container_add (GTK_CONTAINER (pannable), results_view);
+	gtk_container_add (GTK_CONTAINER (results_view_scroll), results_view);
 
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (results_view));
 	g_signal_connect (selection, "changed",
-			  G_CALLBACK (on_results_view_selection_changed), this);
+			  G_CALLBACK (onResultsViewSelectionChanged), this);
 
 	/* def column */
 	renderer = gtk_cell_renderer_text_new ();
@@ -317,33 +336,11 @@ MStarDict::create_main_window ()
 						     NULL);
 	g_object_set (G_OBJECT (renderer), "xpad", 10, NULL);
 
-	/* bookname column */
-	renderer = gtk_cell_renderer_text_new ();
-	gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW (results_view),
-						     -1,
-						     "Bookname", renderer,
-						     "text", BOOKNAME_COLUMN,
-						     NULL);
-
-	if (!gtk_style_lookup_color (GTK_WIDGET (label_widget)->style, "SecondaryTextColor",
-				     &style_color)) {
-		gdk_color_parse ("grey", &style_color);
-	}
-	g_object_set (G_OBJECT (renderer),
-		      "xalign", 1.0,
-		      "width-chars", 10,
-		      "foreground-gdk", &style_color,
-		      "foreground-set", TRUE,
-		      "size", 12000,
-		      "ellipsize", PANGO_ELLIPSIZE_END,
-		      "ellipsize-set", TRUE,
-		      NULL);
-
 	/* search entry */
 	search = hildon_entry_new (HILDON_SIZE_FINGER_HEIGHT);
 	gtk_box_pack_end (GTK_BOX (vbox), search, FALSE, TRUE, 0);
 	g_signal_connect (search, "changed",
-			  G_CALLBACK (on_search_entry_changed), this);
+			  G_CALLBACK (onSearchEntryChanged), this);
 
 	/* window signals */
 	g_signal_connect (G_OBJECT (window), "destroy",
@@ -355,6 +352,26 @@ MStarDict::create_main_window ()
 
 	/* grab focus to search entry */
 	gtk_widget_grab_focus (GTK_WIDGET (search));
+}
+
+void
+MStarDict::ResultsListClear()
+{
+	gtk_list_store_clear (results_list);
+}
+
+void
+MStarDict::ResultsListInsertLast(const gchar *word)
+{
+	GtkTreeIter iter;
+	gtk_list_store_append (results_list, &iter);
+	gtk_list_store_set (results_list, &iter, DEF_COLUMN, word, -1);
+}
+
+void
+MStarDict::ReScroll()
+{
+	hildon_pannable_area_scroll_to (HILDON_PANNABLE_AREA (results_view_scroll), -1, 0);
 }
 
 int
@@ -371,10 +388,11 @@ main (int argc, char **argv)
 
 	/* create main window */
 	MStarDict mStarDict;
-	mStarDict.create_main_window ();
+	pMStarDict = &mStarDict;
+	mStarDict.CreateMainWindow();
 
 	/* load all dictionaries */
-	mStarDict.load_dictionaries ();
+	mStarDict.LoadDictionaries();
 
 	gtk_main ();
 	return 0;

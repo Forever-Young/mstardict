@@ -21,6 +21,9 @@
 #include <hildon/hildon.h>
 
 class Library;
+class MStarDict;
+
+extern MStarDict *pMStarDict;
 
 class MStarDict {
 private:
@@ -28,19 +31,26 @@ private:
 	GtkWidget *results_widget;
 	GtkWidget *search;
 	GtkWidget *results_view;
+	GtkWidget *results_view_scroll;
 
 	GtkListStore *results_list;
 
-	Library *lib;
-	TSearchResultList result_list;
+	Library *oLibs;
+	TSearchResultList results;
 
-	static gboolean on_results_view_selection_changed (GtkTreeSelection *selection, MStarDict *mStarDict);
-	static gboolean on_search_entry_changed (GtkEditable *editable, MStarDict *mStarDict);
+	static gboolean onResultsViewSelectionChanged (GtkTreeSelection *selection, MStarDict *mStarDict);
+	static gboolean onSearchEntryChanged (GtkEditable *editable, MStarDict *mStarDict);
 
 public:
-	MStarDict ();
-	~MStarDict ();
-	void create_translation_window (const gchar *bookname, const gchar *def, const gchar *exp);
-	void create_main_window ();
-	void load_dictionaries ();
+	MStarDict();
+	~MStarDict();
+
+	void CreateTranslationWindow(const gchar *bookname, const gchar *def, const gchar *exp);
+	void CreateMainWindow();
+
+	void LoadDictionaries();
+
+	void ResultsListClear();
+	void ResultsListInsertLast(const gchar *word);
+	void ReScroll();
 };

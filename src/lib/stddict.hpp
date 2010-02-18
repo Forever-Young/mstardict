@@ -235,7 +235,6 @@ public:
 	const std::string& dict_name(size_t idict) { return oLib[idict]->dict_name(); }
 	const std::string& dict_type(size_t idict) { return oLib[idict]->dict_type(); }
 	bool has_dict() { return !oLib.empty(); }
-	gint ndicts() { return oLib.size(); }
 
 	const gchar * poGetWord(glong iIndex,size_t iLib, int servercollatefunc) {
 		return oLib[iLib]->idx_file->getWord(iIndex, EnableCollationLevel, servercollatefunc);

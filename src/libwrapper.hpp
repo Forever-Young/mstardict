@@ -30,16 +30,17 @@ typedef TSearchResultList::iterator PSearchResult;
 //of it
 class Library : public Libs {
 public:
-	Library(bool uinput, bool uoutput) : 
-		Libs(NULL, FALSE, 0, 0), utf8_input(uinput), utf8_output(uoutput)  {}
+	Library();
+	~Library();
 
-	bool process_phrase(const char *loc_str, TSearchResultList &res_list);
 	std::vector<InstantDictIndex> query_dictmask;
+	CurrentIndex *iCurrentIndex;
 
+	void ListWords(CurrentIndex* iIndex);
+	bool BuildResultData(std::vector<InstantDictIndex> &dictmask, const char* sWord, CurrentIndex *iIndex, int iLib, TSearchResultList& res_list);
+
+	bool SimpleLookup(const gchar* sWord, CurrentIndex* piIndex);
 private:
-	bool utf8_input, utf8_output;
-
-	void SimpleLookup(const string &str, TSearchResultList& res_list);
 	void LookupWithFuzzy(const string &str, TSearchResultList& res_list);
 	void LookupWithRule(const string &str, TSearchResultList& res_lsit);
 	void LookupData(const string &str, TSearchResultList& res_list);

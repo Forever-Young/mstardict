@@ -26,7 +26,7 @@
 #include <map>
 
 #include "libwrapper.hpp"
-
+#include "mstardict.hpp"
 
 static std::string xdxf2text(const char *p)
 {
@@ -158,20 +158,103 @@ static string parse_data(const gchar *data)
 		p += sec_size;
 	}
 
-  
 	return res;
 }
 
-void Library::SimpleLookup(const string &str, TSearchResultList& res_list)
-{	
-	glong idx, idx_suggest;
-	res_list.reserve(ndicts());
-	for (gint idict=0; idict<ndicts(); ++idict)
-		if (SimpleLookupWord(str.c_str(), idx, idx_suggest, (size_t) idict, 0))
-			res_list.push_back(
-				TSearchResult(dict_name(idict),
-					      poGetWord(idx, idict, 0),
-					      parse_data(poGetOrigWordData(idx, idict))));
+void Library::ListWords(CurrentIndex* iIndex)
+{
+	CurrentIndex *iCurrent = (CurrentIndex*)g_memdup(iIndex, sizeof(CurrentIndex)*query_dictmask.size());
+
+	pMStarDict->ResultsListClear();
+
+	int iWordCount=0;
+	const gchar * poCurrentWord = poGetCurrentWord(iIndex, query_dictmask, 0);
+	if (poCurrentWord) {
+		pMStarDict->ResultsListInsertLast(poCurrentWord);
+		iWordCount++;
+
+		while (iWordCount < 30 && (poCurrentWord = poGetNextWord(NULL, iIndex, query_dictmask, 0))) {
+			pMStarDict->ResultsListInsertLast(poCurrentWord);
+			iWordCount++;
+		}
+	}
+	pMStarDict->ReScroll();
+
+	if (iCurrent)
+		g_free (iCurrent);
+}
+
+bool Library::BuildResultData(std::vector<InstantDictIndex> &dictmask, const char* sWord, CurrentIndex *iIndex, int iLib, TSearchResultList& res_list)
+{
+	int iRealLib;
+	bool bFound = false, bLookupWord = false, bLookupSynonymWord = false;
+	gint nWord=0, count=0, i=0, j=0;
+
+	iRealLib = dictmask[iLib].index;
+
+	bLookupWord = LookupWord(sWord, iIndex[iLib].idx, iIndex[iLib].idx_suggest, iRealLib, 0);
+	if (!bLookupWord)
+		bLookupWord = LookupSimilarWord(sWord, iIndex[iLib].idx, iIndex[iLib].idx_suggest, iRealLib, 0);
+	if (!bLookupWord)
+		bLookupWord = SimpleLookupWord(sWord, iIndex[iLib].idx, iIndex[iLib].idx_suggest, iRealLib, 0);
+
+	bLookupSynonymWord = LookupSynonymWord(sWord, iIndex[iLib].synidx, iIndex[iLib].synidx_suggest, iRealLib, 0);
+	if (!bLookupSynonymWord)
+		bLookupSynonymWord = LookupSynonymSimilarWord(sWord, iIndex[iLib].synidx, iIndex[iLib].synidx_suggest, iRealLib, 0);
+	if (!bLookupSynonymWord)
+		bLookupSynonymWord = SimpleLookupSynonymWord(sWord, iIndex[iLib].synidx, iIndex[iLib].synidx_suggest, iRealLib, 0);
+
+	g_debug ("bookname: %s, iLib: %d, iRealLib: %d, str: %s", dict_name(iLib).c_str(), iLib, iRealLib, sWord);
+
+	if (bLookupWord || bLookupSynonymWord) {
+		if (bLookupWord)
+			nWord++;
+
+		if (bLookupSynonymWord)
+			nWord+=GetOrigWordCount(iIndex[iLib].synidx, iRealLib, false);
+
+		if (bLookupWord) {
+			count = GetOrigWordCount(iIndex[iLib].idx, iRealLib, true);
+			for (i=0;i<count;i++) {
+				res_list.push_back(TSearchResult(dict_name(iLib),
+								 poGetWord(iIndex[iLib].idx, iRealLib, 0),
+								 parse_data(poGetOrigWordData(iIndex[iLib].idx+i, iRealLib))));
+			}
+			i = 1;
+		} else {
+			i = 0;
+		}
+		for (j = 0; i < nWord; i++, j++) {
+				res_list.push_back(TSearchResult(dict_name(iLib),
+								 poGetWord(iIndex[iLib].synidx+j, iRealLib, 0),
+								 parse_data(poGetOrigWordData(iIndex[iLib].synidx+j, iRealLib))));
+		}
+
+		bFound = true;
+	}
+
+	return bFound;
+}
+
+bool Library::SimpleLookup(const gchar* sWord, CurrentIndex* piIndex)
+{
+	CurrentIndex *iIndex;
+	TSearchResultList results;
+	bool bFound = false;
+
+	if (!piIndex)
+		iIndex = (CurrentIndex *)g_malloc(sizeof(CurrentIndex) * query_dictmask.size());
+	else
+		iIndex = piIndex;
+
+	for (size_t iLib=0; iLib<query_dictmask.size(); iLib++) {
+		bFound = BuildResultData(query_dictmask, sWord, iIndex, iLib, results);
+	}
+
+	if (!piIndex)
+		g_free(iIndex);
+
+	return bFound;
 }
 
 void Library::LookupWithFuzzy(const string &str, TSearchResultList& res_list)
@@ -184,21 +267,21 @@ void Library::LookupWithFuzzy(const string &str, TSearchResultList& res_list)
 	
 	for (gchar **p=fuzzy_res, **end=fuzzy_res+MAXFUZZY; 
 	     p!=end && *p; ++p) {
-		SimpleLookup(*p, res_list);
+//		SimpleLookup(*p, res_list);
 		g_free(*p);
 	}
 }
 
 void Library::LookupWithRule(const string &str, TSearchResultList& res_list)
 {
-	std::vector<gchar *> match_res((MAX_MATCH_ITEM_PER_LIB) * ndicts());
+	std::vector<gchar *> match_res((MAX_MATCH_ITEM_PER_LIB) * query_dictmask.size());
 
 	gint nfound=Libs::LookupWithRule(str.c_str(), &match_res[0], query_dictmask);
 	if (!nfound)
 		return;
 
 	for (gint i=0; i<nfound; ++i) {
-		SimpleLookup(match_res[i], res_list);
+//		SimpleLookup(match_res[i], res_list);
 		g_free(match_res[i]);
 	}
 }
@@ -206,67 +289,23 @@ void Library::LookupWithRule(const string &str, TSearchResultList& res_list)
 void Library::LookupData(const string &str, TSearchResultList& res_list)
 {
 	bool cancel = false;
-	std::vector<gchar *> drl[ndicts()];
+	std::vector<gchar *> drl[query_dictmask.size()];
 	if (!Libs::LookupData(str.c_str(), drl, NULL, NULL, &cancel, query_dictmask))
 		return;
-	for (int idict=0; idict<ndicts(); ++idict)
-		for (std::vector<gchar *>::size_type j=0; j<drl[idict].size(); ++j) {
-			SimpleLookup(drl[idict][j], res_list);
-			g_free(drl[idict][j]);
+	for (size_t iLib=0; iLib<query_dictmask.size(); iLib++)
+		for (std::vector<gchar *>::size_type j=0; j<drl[iLib].size(); ++j) {
+//			SimpleLookup(drl[iLib][j], res_list);
+			g_free(drl[iLib][j]);
 		}
 }
 
-bool Library::process_phrase(const char *loc_str, TSearchResultList &res_list)
+Library::Library () : Libs (NULL, FALSE, 0, 0)
 {
-	if (NULL==loc_str)
-		return true;
-
-	std::string query;
-
-	gsize bytes_read;
-	gsize bytes_written;
-	GError *err=NULL;
-	char *str=NULL;
-	if (!utf8_input)
-		str=g_locale_to_utf8(loc_str, -1, &bytes_read, &bytes_written, &err);
-	else
-		str=g_strdup(loc_str);
-
-	if (NULL==str) {
-		fprintf(stderr, _("Can not convert %s to utf8.\n"), loc_str);
-		fprintf(stderr, "%s\n", err->message);
-		g_error_free(err);
-		return false;
-	}
-
-	if (str[0]=='\0')
-		return true;
-
-	switch (analyse_query(str, query)) {
-	case qtFUZZY:
-		g_debug ("FUZZY");
-		LookupWithFuzzy(query, res_list);
-		break;
-	case qtREGEX:
-		g_debug ("REGEX");
-		LookupWithRule(query, res_list);
-		break;
-	case qtSIMPLE:
-		g_debug ("SIMPLE");
-		SimpleLookup(str, res_list);
-		if (res_list.empty())
-			LookupWithFuzzy(str, res_list);
-		break;
-	case qtDATA:
-		g_debug ("DATA");
-		LookupData(query, res_list);
-		break;
-	default:
-		g_debug ("DEFAULT");
-		/*nothing*/;
-	}
-
-	g_free(str);
-	return true;
+	iCurrentIndex = NULL;
 }
 
+Library::~Library ()
+{
+	if (iCurrentIndex)
+		g_free (iCurrentIndex);
+}
