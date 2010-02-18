@@ -40,9 +40,9 @@ public:
 	bool BuildResultData(std::vector<InstantDictIndex> &dictmask, const char* sWord, CurrentIndex *iIndex, int iLib, TSearchResultList& res_list);
 
 	bool SimpleLookup(const gchar* sWord, CurrentIndex* piIndex);
+	void LookupWithFuzzy(const gchar* sWord);
+	void LookupWithRule(const gchar* sWord);
 private:
-	void LookupWithFuzzy(const string &str, TSearchResultList& res_list);
-	void LookupWithRule(const string &str, TSearchResultList& res_lsit);
 	void LookupData(const string &str, TSearchResultList& res_list);
 };
 

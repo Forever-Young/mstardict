@@ -257,33 +257,45 @@ bool Library::SimpleLookup(const gchar* sWord, CurrentIndex* piIndex)
 	return bFound;
 }
 
-void Library::LookupWithFuzzy(const string &str, TSearchResultList& res_list)
+void Library::LookupWithFuzzy(const gchar* sWord)
 {
-	static const int MAXFUZZY=10;
+	static const int MAX_FUZZY_MATCH_ITEM=100;
+	gchar *fuzzy_reslist[MAX_FUZZY_MATCH_ITEM];
+	bool bFound = false;
 
-	gchar *fuzzy_res[MAXFUZZY];
-	if (!Libs::LookupWithFuzzy(str.c_str(), fuzzy_res, MAXFUZZY, query_dictmask))
-		return;
-	
-	for (gchar **p=fuzzy_res, **end=fuzzy_res+MAXFUZZY; 
-	     p!=end && *p; ++p) {
-//		SimpleLookup(*p, res_list);
-		g_free(*p);
+	pMStarDict->ResultsListClear();
+
+	bFound = Libs::LookupWithFuzzy(sWord, fuzzy_reslist, MAX_FUZZY_MATCH_ITEM, query_dictmask);
+	if (bFound) {
+		SimpleLookup(fuzzy_reslist[0], iCurrentIndex);
+
+		for (int i=0; i<MAX_FUZZY_MATCH_ITEM && fuzzy_reslist[i]; i++) {
+			pMStarDict->ResultsListInsertLast(fuzzy_reslist[i]);
+			g_free(fuzzy_reslist[i]);
+		}
+		pMStarDict->ReScroll();
 	}
 }
 
-void Library::LookupWithRule(const string &str, TSearchResultList& res_list)
+void Library::LookupWithRule(const gchar* sWord)
 {
-	std::vector<gchar *> match_res((MAX_MATCH_ITEM_PER_LIB) * query_dictmask.size());
+	gint iMatchCount=0;
+	gchar **ppMatchWord = (gchar **)g_malloc(sizeof(gchar *) * (MAX_MATCH_ITEM_PER_LIB) * query_dictmask.size());
 
-	gint nfound=Libs::LookupWithRule(str.c_str(), &match_res[0], query_dictmask);
-	if (!nfound)
-		return;
+	pMStarDict->ResultsListClear();
 
-	for (gint i=0; i<nfound; ++i) {
-//		SimpleLookup(match_res[i], res_list);
-		g_free(match_res[i]);
+	iMatchCount=Libs::LookupWithRule(sWord, ppMatchWord, query_dictmask);
+	if (iMatchCount) {
+		for (gint i=0; i<iMatchCount; i++)
+			pMStarDict->ResultsListInsertLast(ppMatchWord[i]);
+
+		SimpleLookup(ppMatchWord[0], iCurrentIndex);
+		pMStarDict->ReScroll();
+
+		for(gint i=0; i<iMatchCount; i++)
+			g_free(ppMatchWord[i]);
 	}
+	g_free(ppMatchWord);
 }
 
 void Library::LookupData(const string &str, TSearchResultList& res_list)

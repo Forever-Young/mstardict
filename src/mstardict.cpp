@@ -146,17 +146,22 @@ MStarDict::onSearchEntryChanged (GtkEditable *editable,
 		switch (analyse_query(sWord, query)) {
 			case qtFUZZY:
 				g_debug ("FUZZY");
-//				oLibs->LookupWithFuzzy(query, res_list);
+				mStarDict->oLibs->LookupWithFuzzy(sWord);
 				break;
 			case qtREGEX:
 				g_debug ("REGEX");
-//				oLibs->LookupWithRule(query, res_list);
+				mStarDict->oLibs->LookupWithRule(sWord);
 				break;
 			case qtSIMPLE:
 				g_debug ("SIMPLE");
 				bFound = mStarDict->oLibs->SimpleLookup(sWord, mStarDict->oLibs->iCurrentIndex);
 				if (!bFound) {
-					/* suggested */
+					const gchar *sugWord = mStarDict->oLibs->GetSuggestWord(sWord, mStarDict->oLibs->iCurrentIndex, mStarDict->oLibs->query_dictmask, 0);
+					if (sugWord) {
+						gchar *sSugWord = g_strdup(sugWord);
+						bFound = mStarDict->oLibs->SimpleLookup(sSugWord, mStarDict->oLibs->iCurrentIndex);
+						g_free(sSugWord);
+					}
 				}
 				mStarDict->oLibs->ListWords(mStarDict->oLibs->iCurrentIndex);
 				break;
