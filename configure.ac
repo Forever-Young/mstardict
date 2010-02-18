@@ -44,10 +44,6 @@ dnl fill cflags for libstardict
 PKG_CHECK_MODULES(LIB_STARDICT, glib-2.0 >= 2.6.1 gtk+-2.0 >= 2.12 sigc++-2.0)
 AC_SUBST(LIB_STARDICT_CFLAGS)
 
-# Discover where to install the .desktop file:
-HILDON_DESKTOP_ENTRY_DIR=`pkg-config osso-af-settings --variable=desktopentrydir`
-AC_SUBST(HILDON_DESKTOP_ENTRY_DIR)
-
 AC_OUTPUT([
  Makefile
  data/Makefile
