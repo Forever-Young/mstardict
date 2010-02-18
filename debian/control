@@ -13,7 +13,7 @@ Description: International dictionary for Maemo
  It can use StarDict DICT files as a word database for translation.
  .
  MStarDict is loading StarDict DICT files from MyDocs/mstardict/ directory.
-XB-Maemo-Display-Name: Maemo Stardict
+XB-Maemo-Display-Name: MStarDict
 XB-Maemo-Icon-26:
  iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAABHNCSVQICAgI
  fAhkiAAAAAlwSFlzAAAN1wAADdcBQiibeAAAABl0RVh0U29mdHdhcmUAd3d3

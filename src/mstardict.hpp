@@ -24,8 +24,8 @@ class Library;
 
 class MStarDict {
 private:
-	GtkWidget *label;
-	GtkWidget *alignment;
+	GtkWidget *label_widget;
+	GtkWidget *results_widget;
 	GtkWidget *search;
 	GtkWidget *results_view;
 

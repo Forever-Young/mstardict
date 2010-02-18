@@ -53,8 +53,8 @@ enum {
 
 MStarDict::MStarDict ()
 {
-	label = NULL;
-	alignment = NULL;
+	label_widget = NULL;
+	results_widget = NULL;
 	results_view = NULL;
 
 	/* create list of ressults */
@@ -97,7 +97,7 @@ MStarDict::on_results_view_selection_changed (GtkTreeSelection *selection,
 
 		bookname = g_markup_printf_escaped ("<span color=\"dimgray\" size=\"x-small\">%s</span>",
 						    mStarDict->result_list[selected].bookname.c_str());
-		def = g_markup_printf_escaped ("<span color=\"darkred\" weight=\"heavy\" size=\"x-large\">%s</span>",
+		def = g_markup_printf_escaped ("<span color=\"darkred\" weight=\"heavy\" size=\"large\">%s</span>",
 					       mStarDict->result_list[selected].def.c_str());
 		exp = g_strdup (mStarDict->result_list[selected].exp.c_str());
 
@@ -126,8 +126,8 @@ MStarDict::on_search_entry_changed (GtkEditable *editable,
 	search = gtk_entry_get_text (GTK_ENTRY (editable));
 
 	if (strcmp (search, "") == 0) {
-		gtk_widget_show (mStarDict->label);
-		gtk_widget_hide (mStarDict->alignment);
+		gtk_widget_show (mStarDict->label_widget);
+		gtk_widget_hide (mStarDict->results_widget);
 	} else {
 		selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (mStarDict->results_view));
 		gtk_tree_selection_set_mode (selection, GTK_SELECTION_NONE);
@@ -158,8 +158,8 @@ MStarDict::on_search_entry_changed (GtkEditable *editable,
 		gtk_tree_selection_unselect_all (selection);
 		gtk_tree_selection_set_mode (selection, GTK_SELECTION_SINGLE);
 
-		gtk_widget_hide (mStarDict->label);
-		gtk_widget_show (mStarDict->alignment);
+		gtk_widget_hide (mStarDict->label_widget);
+		gtk_widget_show (mStarDict->results_widget);
 	}
 
 	return TRUE;
@@ -241,7 +241,7 @@ MStarDict::create_translation_window (const gchar *bookname,
 	gtk_box_pack_start (GTK_BOX (vbox), label, FALSE, FALSE, 0);
 
 	label = gtk_label_new ("Expresion");
-	gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.5);
+	gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.0);
 	gtk_label_set_markup (GTK_LABEL (label), exp);
 	gtk_box_pack_start (GTK_BOX (vbox), label, FALSE, FALSE, 0);
 
@@ -252,34 +252,53 @@ void
 MStarDict::create_main_window ()
 {
 	HildonProgram *program = NULL;
-	GtkWidget *window, *vbox, *pannable;
+	GtkWidget *window, *alignment, *vbox, *pannable;
 	GtkCellRenderer *renderer;
 	GtkTreeSelection *selection;
 	GdkColor style_color;
 
+	/* hildon program */
 	program = hildon_program_get_instance ();
 	g_set_application_name (_("MStardict"));
 
+	/* main window */
 	window = hildon_stackable_window_new ();
 	hildon_program_add_window (program, HILDON_WINDOW (window));
 
-	vbox = gtk_vbox_new (FALSE, 0);
-	gtk_container_add (GTK_CONTAINER (window), vbox);
-
-	label = gtk_label_new (_("No search result"));
-	hildon_helper_set_logical_color (label, GTK_RC_FG, GTK_STATE_NORMAL,
-					 "SecondaryTextColor");
-	hildon_helper_set_logical_font (label, "LargeSystemFont");
-	gtk_box_pack_start (GTK_BOX (vbox), label, TRUE, TRUE, 0);
-
+	/* aligment */
 	alignment = gtk_alignment_new (0.5, 0.5, 1.0, 1.0);
-	gtk_alignment_set_padding (GTK_ALIGNMENT (alignment), HILDON_MARGIN_HALF, 0,
-				   HILDON_MARGIN_DOUBLE, HILDON_MARGIN_DEFAULT);
-	gtk_box_pack_start (GTK_BOX (vbox), alignment, TRUE, TRUE, 0);
+	gtk_alignment_set_padding (GTK_ALIGNMENT (alignment),
+				   HILDON_MARGIN_HALF,
+				   0,
+				   HILDON_MARGIN_DEFAULT,
+				   HILDON_MARGIN_DEFAULT);
+	gtk_container_add (GTK_CONTAINER (window), alignment);
 
+	/* main vbox */
+	vbox = gtk_vbox_new (FALSE, 0);
+	gtk_container_add (GTK_CONTAINER (alignment), vbox);
+
+	/* no_search_result label */
+	label_widget = gtk_label_new (_("No search result"));
+	hildon_helper_set_logical_color (label_widget, GTK_RC_FG, 
+					 GTK_STATE_NORMAL, "SecondaryTextColor");
+	hildon_helper_set_logical_font (label_widget, "LargeSystemFont");
+	gtk_box_pack_start (GTK_BOX (vbox), label_widget, TRUE, TRUE, 0);
+
+	/* alignment for pannable area */
+	results_widget = gtk_alignment_new (0.5, 0.5, 1.0, 1.0);
+	gtk_alignment_set_padding (GTK_ALIGNMENT (results_widget),
+				   0,
+				   0,
+				   HILDON_MARGIN_DEFAULT,
+				   HILDON_MARGIN_DEFAULT);
+	gtk_box_pack_start (GTK_BOX (vbox), results_widget, TRUE, TRUE, 0);
+
+	/* pannable for tree view */
 	pannable = hildon_pannable_area_new ();
-	gtk_container_add (GTK_CONTAINER (alignment), pannable);
+	gtk_container_add (GTK_CONTAINER (results_widget), pannable);
 
+	/* result tree view */
 	results_view = hildon_gtk_tree_view_new (HILDON_UI_MODE_EDIT);
 	gtk_tree_view_set_model (GTK_TREE_VIEW (results_view),
 				 GTK_TREE_MODEL (results_list));
@@ -296,6 +315,7 @@ MStarDict::create_main_window ()
 						     "Def", renderer,
 						     "text", DEF_COLUMN,
 						     NULL);
+	g_object_set (G_OBJECT (renderer), "xpad", 10, NULL);
 
 	/* bookname column */
 	renderer = gtk_cell_renderer_text_new ();
@@ -305,7 +325,7 @@ MStarDict::create_main_window ()
 						     "text", BOOKNAME_COLUMN,
 						     NULL);
 
-	if (!gtk_style_lookup_color (GTK_WIDGET (label)->style, "SecondaryTextColor",
+	if (!gtk_style_lookup_color (GTK_WIDGET (label_widget)->style, "SecondaryTextColor",
 				     &style_color)) {
 		gdk_color_parse ("grey", &style_color);
 	}
@@ -331,7 +351,7 @@ MStarDict::create_main_window ()
 
 	/* show all widget instead of alignment */
 	gtk_widget_show_all (GTK_WIDGET (window));
-	gtk_widget_hide (alignment);
+	gtk_widget_hide (results_widget);
 
 	/* grab focus to search entry */
 	gtk_widget_grab_focus (GTK_WIDGET (search));
