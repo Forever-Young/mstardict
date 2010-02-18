@@ -454,6 +454,11 @@ MStarDict::SearchWord()
 	switch (analyse_query(sWord, query)) {
 	case qtDATA:
 	    bFound = oLibs->LookupData(query.c_str());
+
+	    if (bFound)
+		ShowNoResults(false);
+	    else
+		ShowNoResults(true);
 	    break;
 	default:
 	    /* nothing */ ;
@@ -461,11 +466,6 @@ MStarDict::SearchWord()
 
 	/* unselect selected rows */
 	ResultsUnselectAll(GTK_SELECTION_SINGLE);
-
-	if (bFound)
-	    ShowNoResults(false);
-	else
-	    ShowNoResults(true);
     }
 }
 

@@ -1,6 +1,13 @@
+mstardict (0.4-4) unstable; urgency=low
+
+  * Result window was showing "No search reasult" after Enter
+    key was pressed.
+
+ -- Roman Moravcik <roman.moravcik@gmail.com>  Wed, 10 Feb 2010 17:12:11 +0100
+
 mstardict (0.4-3) unstable; urgency=low
 
-  * Make package depend of ttf-freefont.
+  * Make package depend on ttf-freefont.
   * Added clear button.
   * Fixed wrapping of lines in translation window.
 
