@@ -1,3 +1,10 @@
+mstardict (0.3-2) unstable; urgency=low
+
+  * Splited code of dictionary management.
+  * Fixed full-text search.
+
+ -- Roman Moravcik <roman.moravcik@gmail.com>  Wed,  3 Feb 2010 17:49:37 +0100
+
 mstardict (0.3-1) unstable; urgency=low
 
   * Added dictionary management.

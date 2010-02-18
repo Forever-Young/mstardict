@@ -175,20 +175,20 @@ Library::ListWords(CurrentIndex *iIndex)
 						       sizeof(CurrentIndex) *
 						       query_dictmask.size());
 
-    pMStarDict->ResultsListClear();
+    oStarDict->ResultsListClear();
 
     int iWordCount = 0;
     const gchar *poCurrentWord = poGetCurrentWord(iIndex, query_dictmask, 0);
     if (poCurrentWord) {
-	pMStarDict->ResultsListInsertLast(poCurrentWord);
+	oStarDict->ResultsListInsertLast(poCurrentWord);
 	iWordCount++;
 
 	while (iWordCount < 30 && (poCurrentWord = poGetNextWord(NULL, iIndex, query_dictmask, 0))) {
-	    pMStarDict->ResultsListInsertLast(poCurrentWord);
+	    oStarDict->ResultsListInsertLast(poCurrentWord);
 	    iWordCount++;
 	}
     }
-    pMStarDict->ReScroll();
+    oStarDict->ResultsReScroll();
 
     if (iCurrent)
 	g_free(iCurrent);
@@ -292,17 +292,17 @@ Library::LookupWithFuzzy(const gchar *sWord)
     gchar *fuzzy_reslist[MAX_FUZZY_MATCH_ITEM];
     bool bFound = false;
 
-    pMStarDict->ResultsListClear();
+    oStarDict->ResultsListClear();
 
     bFound = Libs::LookupWithFuzzy(sWord, fuzzy_reslist, MAX_FUZZY_MATCH_ITEM, query_dictmask);
     if (bFound) {
 	SimpleLookup(fuzzy_reslist[0], iCurrentIndex);
 
 	for (int i = 0; i < MAX_FUZZY_MATCH_ITEM && fuzzy_reslist[i]; i++) {
-	    pMStarDict->ResultsListInsertLast(fuzzy_reslist[i]);
+	    oStarDict->ResultsListInsertLast(fuzzy_reslist[i]);
 	    g_free(fuzzy_reslist[i]);
 	}
-	pMStarDict->ReScroll();
+	oStarDict->ResultsReScroll();
     }
 
     return bFound;
@@ -316,15 +316,15 @@ Library::LookupWithRule(const gchar *sWord)
     gchar **ppMatchWord =
 	(gchar **) g_malloc(sizeof(gchar *) * (MAX_MATCH_ITEM_PER_LIB) * query_dictmask.size());
 
-    pMStarDict->ResultsListClear();
+    oStarDict->ResultsListClear();
 
     iMatchCount = Libs::LookupWithRule(sWord, ppMatchWord, query_dictmask);
     if (iMatchCount) {
 	for (gint i = 0; i < iMatchCount; i++)
-	    pMStarDict->ResultsListInsertLast(ppMatchWord[i]);
+	    oStarDict->ResultsListInsertLast(ppMatchWord[i]);
 
 	SimpleLookup(ppMatchWord[0], iCurrentIndex);
-	pMStarDict->ReScroll();
+	oStarDict->ResultsReScroll();
 
 	for (gint i = 0; i < iMatchCount; i++)
 	    g_free(ppMatchWord[i]);
@@ -343,15 +343,15 @@ Library::LookupWithRegex(const gchar *sWord)
     gchar **ppMatchWord =
 	(gchar **) g_malloc(sizeof(gchar *) * (MAX_MATCH_ITEM_PER_LIB) * query_dictmask.size());
 
-    pMStarDict->ResultsListClear();
+    oStarDict->ResultsListClear();
 
     iMatchCount = Libs::LookupWithRegex(sWord, ppMatchWord, query_dictmask);
     if (iMatchCount) {
 	for (gint i = 0; i < iMatchCount; i++)
-	    pMStarDict->ResultsListInsertLast(ppMatchWord[i]);
+	    oStarDict->ResultsListInsertLast(ppMatchWord[i]);
 
 	SimpleLookup(ppMatchWord[0], iCurrentIndex);
-	pMStarDict->ReScroll();
+	oStarDict->ResultsReScroll();
 
 	for (gint i = 0; i < iMatchCount; i++)
 	    g_free(ppMatchWord[i]);
@@ -362,18 +362,35 @@ Library::LookupWithRegex(const gchar *sWord)
     return bFound;
 }
 
+static void
+LookupProgressDialogUpdate(gpointer data,
+			   double fraction)
+{
+    GtkWidget *dialog = GTK_WIDGET(data);
+    GtkWidget *progress;
+
+    progress = GTK_WIDGET(g_object_get_data(G_OBJECT(dialog), "progress"));
+    gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(progress), fraction);
+
+    while (gtk_events_pending())
+	gtk_main_iteration();
+}
+
 bool
 Library::LookupData(const gchar *sWord)
 {
+    GtkWidget *dialog;
     bool cancel = false;
     bool bFound = false;
 
     std::vector < std::vector < gchar * > > reslist(query_dictmask.size());
 
-    pMStarDict->ResultsListClear();
-    pMStarDict->ShowProgressIndicator(true);
 
-    bFound = Libs::LookupData(sWord, &reslist[0], NULL, NULL, &cancel, query_dictmask);
+    oStarDict->ResultsListClear();
+    oStarDict->ShowProgressIndicator(true);
+    dialog = oStarDict->CreateLookupProgressDialog(&cancel);
+
+    bFound = Libs::LookupData(sWord, &reslist[0], LookupProgressDialogUpdate, (gpointer) dialog, &cancel, query_dictmask);
     if (bFound) {
 	for (size_t iLib = 0; iLib < query_dictmask.size(); iLib++) {
 	    if (!reslist[iLib].empty()) {
@@ -381,19 +398,21 @@ Library::LookupData(const gchar *sWord)
 
 		for (std::vector < gchar *>::iterator i = reslist[iLib].begin();
 		     i != reslist[iLib].end(); ++i) {
-		    pMStarDict->ResultsListInsertLast(*i);
+		    oStarDict->ResultsListInsertLast(*i);
 		}
 		break;
 	    }
 	}
-	pMStarDict->ReScroll();
+	oStarDict->ResultsReScroll();
     }
-    pMStarDict->ShowProgressIndicator(false);
+    oStarDict->ShowProgressIndicator(false);
+    oStarDict->DestroyLookupProgressDialog(dialog);
     return bFound;
 }
 
-Library::Library():Libs(NULL, FALSE, 0, 0)
+Library::Library(MStarDict *mStarDict):Libs(NULL, FALSE, 0, 0)
 {
+    oStarDict = mStarDict;
     iCurrentIndex = NULL;
 }
 

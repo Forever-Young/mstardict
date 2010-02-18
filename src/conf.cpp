@@ -29,18 +29,18 @@
 
 #include "conf.hpp"
 
-MStarDictConf::MStarDictConf()
+Conf::Conf()
 {
     /* get the default client */
     gconf_client = gconf_client_get_default();
 }
 
-MStarDictConf::~MStarDictConf()
+Conf::~Conf()
 {
 }
 
-bool MStarDictConf::GetStringList(const gchar *key,
-				  std::list < std::string > &list)
+bool Conf::GetStringList(const gchar *key,
+			 std::list < std::string > &list)
 {
     GConfValue *value = NULL;
     GSList *slist = NULL;
@@ -68,8 +68,8 @@ bool MStarDictConf::GetStringList(const gchar *key,
     return true;
 }
 
-bool MStarDictConf::SetStringList(const gchar *key,
-				  std::list < std::string > &list)
+bool Conf::SetStringList(const gchar *key,
+			 std::list < std::string > &list)
 {
     GSList *slist = NULL;
     gboolean ret = false;

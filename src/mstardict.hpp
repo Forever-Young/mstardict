@@ -26,11 +26,10 @@
 #include <gtk/gtk.h>
 #include <hildon/hildon.h>
 
+class Conf;
+class DictMngr;
 class Library;
-class MStarDictConf;
 class MStarDict;
-
-extern MStarDict *pMStarDict;
 
 class MStarDict {
   private:
@@ -43,8 +42,6 @@ class MStarDict {
 
     GtkListStore *results_list;
 
-    Library *oLibs;
-    MStarDictConf *oConf;
     TSearchResultList results;
 
     static gboolean onResultsViewSelectionChanged(GtkTreeSelection *selection,
@@ -55,24 +52,35 @@ class MStarDict {
 						  MStarDict *mStarDict);
     static gboolean onQuitMenuItemClicked(GtkButton *button,
 					  MStarDict *mStarDict);
+    static gboolean onLookupProgressDialogResponse(GtkDialog *dialog,
+						   gint response_id,
+						   bool *cancel);
+    static gboolean onMainWindowKeyPressEvent(GtkWidget *window,
+					      GdkEventKey *event,
+					      MStarDict *mStarDict);
 
   public:
      MStarDict();
     ~MStarDict();
 
+    Conf *oConf;
+    DictMngr *oDict;
+    Library *oLibs;
+
+    GtkWidget *CreateLookupProgressDialog(bool *cancel);
+    void DestroyLookupProgressDialog(GtkWidget *dialog);
     void CreateTranslationWindow(const gchar *bookname,
 				 const gchar *def,
 				 const gchar *exp);
     void CreateMainWindow();
     void CreateMainMenu();
 
-    void GetAllDictionaryList(std::list < std::string > &dict_list);
-    void LoadDictionaries();
-    void ReLoadDictionaries(std::list < std::string > &dict_list);
+    void SearchWord();
 
     void ResultsListClear();
     void ResultsListInsertLast(const gchar *word);
-    void ReScroll();
+    void ResultsReScroll();
+    void ResultsUnselectAll(GtkSelectionMode mode);
     void ShowNoResults(bool bNoResults);
     void ShowNoDictionary(bool bNoDictionary);
     void ShowProgressIndicator(bool bShow);

@@ -34,6 +34,7 @@
 
 using std::string;
 using std::vector;
+class MStarDict;
 
 //this structure is wrapper and it need for unification
 //results of search whith return Dicts class
@@ -52,8 +53,11 @@ typedef TSearchResultList::iterator PSearchResult;
 //this class is wrapper around Dicts class for easy use
 //of it
 class Library:public Libs {
+  private:
+    MStarDict *oStarDict;
+
   public:
-    Library();
+    Library(MStarDict *mStarDict);
     ~Library();
 
     std::vector < InstantDictIndex > query_dictmask;
@@ -71,8 +75,6 @@ class Library:public Libs {
     bool LookupWithRule(const gchar *sWord);
     bool LookupWithRegex(const gchar *sWord);
     bool LookupData(const gchar *sWord);
-
-  private:
 };
 
 #endif	//!_LIBWRAPPER_HPP_

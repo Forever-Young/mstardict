@@ -47,31 +47,13 @@
 #include <list>
 
 #include "conf.hpp"
+#include "dictmngr.hpp"
 #include "libwrapper.hpp"
-#include "file.hpp"
 #include "mstardict.hpp"
-
-MStarDict *pMStarDict;
 
 enum {
     DEF_COLUMN,
     N_COLUMNS
-};
-
-enum {
-    BOOKNAME_DICT_INFO_COLUMN,
-    FILENAME_DICT_INFO_COLUMN,
-    N_DICT_INFO_COLUMNS
-};
-
-class GetAllDictList {
-  public:
-    GetAllDictList(std::list < std::string > &dict_all_list_):dict_all_list(dict_all_list_) {
-    } void operator() (const std::string & url, bool disable) {
-	dict_all_list.push_back(url);
-    }
-  private:
-    std::list < std::string > &dict_all_list;
 };
 
 MStarDict::MStarDict()
@@ -87,10 +69,13 @@ MStarDict::MStarDict()
 				      G_TYPE_STRING);	/* DEF_COLUMN */
 
     /* initialize configuration */
-    oConf = new MStarDictConf();
+    oConf = new Conf();
+
+    /* initialize dict manager */
+    oDict = new DictMngr(this);
 
     /* initialize stardict library */
-    oLibs = new Library();
+    oLibs = new Library(this);
 }
 
 MStarDict::~MStarDict()
@@ -100,6 +85,9 @@ MStarDict::~MStarDict()
 
     /* deinitialize stardict library */
     delete oLibs;
+
+    /* deinitialize dict manager */
+    delete oDict;
 
     /* deinitialize configuration */
     delete oConf;
@@ -159,39 +147,33 @@ gboolean
 MStarDict::onSearchEntryChanged(GtkEditable* editable,
 				MStarDict* mStarDict)
 {
-    GtkTreeSelection *selection;
     const gchar *sWord;
     bool bFound = false;
     std::string query;
 
-    sWord = gtk_entry_get_text(GTK_ENTRY(editable));
-
     if (mStarDict->oLibs->query_dictmask.empty())
 	return true;
 
+    sWord = gtk_entry_get_text(GTK_ENTRY(editable));
     if (strcmp(sWord, "") == 0) {
 	mStarDict->ShowNoResults(true);
     } else {
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(mStarDict->results_view));
-	gtk_tree_selection_set_mode(selection, GTK_SELECTION_NONE);
-
-	/* unselect rows */
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(mStarDict->results_view));
-	gtk_tree_selection_unselect_all(selection);
-
-	/* show progress indicator */
-//	mStarDict->ShowProgressIndicator(true);
+	mStarDict->ShowProgressIndicator(true);
+	mStarDict->ResultsUnselectAll(GTK_SELECTION_NONE);
 
 	switch (analyse_query(sWord, query)) {
 	case qtFUZZY:
 	    bFound = mStarDict->oLibs->LookupWithFuzzy(query.c_str());
 	    break;
+
 	case qtPATTERN:
 	    bFound = mStarDict->oLibs->LookupWithRule(query.c_str());
 	    break;
+
 	case qtREGEX:
 	    bFound = mStarDict->oLibs->LookupWithRegex(query.c_str());
 	    break;
+
 	case qtSIMPLE:
 	    bFound = mStarDict->oLibs->SimpleLookup(query.c_str(), mStarDict->oLibs->iCurrentIndex);
 	    if (!bFound) {
@@ -209,24 +191,18 @@ MStarDict::onSearchEntryChanged(GtkEditable* editable,
 	    }
 	    mStarDict->oLibs->ListWords(mStarDict->oLibs->iCurrentIndex);
 	    break;
-	case qtDATA:
-	    bFound = mStarDict->oLibs->LookupData(query.c_str());
-	    break;
+
 	default:
-	    /* nothing */ ;
+	    break;
 	}
-
-	/* unselect selected rows */
-	gtk_tree_selection_unselect_all(selection);
-	gtk_tree_selection_set_mode(selection, GTK_SELECTION_SINGLE);
-
-	/* hide progress indicator */
-//	mStarDict->ShowProgressIndicator(false);
 
 	if (bFound)
 	    mStarDict->ShowNoResults(false);
 	else
 	    mStarDict->ShowNoResults(true);
+
+	mStarDict->ResultsUnselectAll(GTK_SELECTION_SINGLE);
+	mStarDict->ShowProgressIndicator(false);
     }
 
     return true;
@@ -236,113 +212,7 @@ gboolean
 MStarDict::onDictionariesMenuItemClicked(GtkButton *button,
 					 MStarDict *mStarDict)
 {
-    GtkWidget *dialog, *selector;
-    GtkCellRenderer *renderer;
-    HildonTouchSelectorColumn *column;
-    GtkTreeModel *tree_model;
-    GtkTreeIter iter;
-    gboolean iter_valid = TRUE;
-    std::list < std::string > all_dict_list;
-    std::list < std::string > selected_dict_list;
-    GtkListStore *dict_list = NULL;
-
-    dict_list = gtk_list_store_new(N_DICT_INFO_COLUMNS,
-				   G_TYPE_STRING,	/* bookname */
-				   G_TYPE_STRING);	/* filename */
-
-    /* create dialog */
-    dialog = gtk_dialog_new();
-    gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);
-    gtk_window_set_title(GTK_WINDOW(dialog), _("Dictionaries"));
-    gtk_dialog_add_button(GTK_DIALOG(dialog), "OK", GTK_RESPONSE_ACCEPT);
-    gtk_window_set_default_size(GTK_WINDOW(dialog), -1, 400);
-
-    /* dictionary selector */
-    selector = hildon_touch_selector_new();
-    gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), selector);
-
-    renderer = gtk_cell_renderer_text_new();
-    g_object_set(G_OBJECT(renderer), "xpad", 10, NULL);
-    column =
-	hildon_touch_selector_append_column(HILDON_TOUCH_SELECTOR
-					    (selector),
-					    GTK_TREE_MODEL(dict_list),
-					    renderer, "text", BOOKNAME_DICT_INFO_COLUMN, NULL);
-    hildon_touch_selector_column_set_text_column(column, 0);
-
-    /* fill list with all available dictionaries */
-    mStarDict->GetAllDictionaryList(all_dict_list);
-    for (std::list < std::string >::iterator i = all_dict_list.begin();
-	 i != all_dict_list.end(); ++i) {
-	DictInfo dictinfo;
-
-	dictinfo.load_from_ifo_file(i->c_str(), 0);
-	gtk_list_store_append(dict_list, &iter);
-	gtk_list_store_set(dict_list, &iter,
-			   BOOKNAME_DICT_INFO_COLUMN,
-			   dictinfo.bookname.c_str(), FILENAME_DICT_INFO_COLUMN, i->c_str(), -1);
-    }
-    g_object_unref(dict_list);
-
-    /* set selector mode to multiple */
-    hildon_touch_selector_set_column_selection_mode(HILDON_TOUCH_SELECTOR
-						    (selector),
-						    HILDON_TOUCH_SELECTOR_SELECTION_MODE_MULTIPLE);
-    hildon_touch_selector_unselect_all(HILDON_TOUCH_SELECTOR(selector), BOOKNAME_DICT_INFO_COLUMN);
-
-    /* select all load dictionaries */
-    tree_model =
-	hildon_touch_selector_get_model(HILDON_TOUCH_SELECTOR(selector), BOOKNAME_DICT_INFO_COLUMN);
-    for (iter_valid = gtk_tree_model_get_iter_first(tree_model, &iter);
-	 iter_valid; iter_valid = gtk_tree_model_iter_next(tree_model, &iter)) {
-	const gchar *bookname;
-
-	gtk_tree_model_get(tree_model, &iter, BOOKNAME_DICT_INFO_COLUMN, &bookname, -1);
-	for (size_t iLib = 0; iLib < mStarDict->oLibs->query_dictmask.size(); iLib++) {
-	    if (!strcmp(mStarDict->oLibs->dict_name(iLib).c_str(), bookname)) {
-		hildon_touch_selector_select_iter(HILDON_TOUCH_SELECTOR
-						  (selector),
-						  BOOKNAME_DICT_INFO_COLUMN, &iter, FALSE);
-		break;
-	    }
-	}
-    }
-
-    /* show dialog */
-    gtk_widget_show_all(GTK_WIDGET(dialog));
-
-    /* run the dialog */
-    if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
-	GList *selected_dicts = NULL;
-
-	selected_dicts =
-	    hildon_touch_selector_get_selected_rows(HILDON_TOUCH_SELECTOR
-						    (selector), BOOKNAME_DICT_INFO_COLUMN);
-	if (selected_dicts) {
-	    GList *dict = selected_dicts;
-	    const gchar *filename;
-
-	    while (dict) {
-		gtk_tree_model_get_iter(GTK_TREE_MODEL(tree_model), &iter,
-					(GtkTreePath *) (dict->data));
-		gtk_tree_model_get(GTK_TREE_MODEL(tree_model), &iter,
-				   FILENAME_DICT_INFO_COLUMN, &filename, -1);
-		selected_dict_list.push_back(std::string(filename));
-		dict = dict->next;
-	    }
-	    g_list_foreach(selected_dicts, (GFunc) gtk_tree_path_free, NULL);
-	    g_list_free(selected_dicts);
-	}
-
-	if (mStarDict->oConf->SetStringList("/apps/maemo/mstardict/dict_list", selected_dict_list)) {
-	    /* reload dictionaries */
-	    mStarDict->ReLoadDictionaries(selected_dict_list);
-
-	    /* trigger re-search */
-	    mStarDict->onSearchEntryChanged(GTK_EDITABLE(mStarDict->search), mStarDict);
-	}
-    }
-    gtk_widget_destroy(GTK_WIDGET(dialog));
+    mStarDict->oDict->CreateDictMngrDialog();
     return true;
 }
 
@@ -354,71 +224,57 @@ MStarDict::onQuitMenuItemClicked(GtkButton *button,
     return true;
 }
 
-void
-MStarDict::GetAllDictionaryList(std::list < std::string > &dict_list)
+gboolean
+MStarDict::onLookupProgressDialogResponse(GtkDialog *dialog,
+					  gint response_id,
+					  bool *cancel)
 {
-    strlist_t dicts_dir_list;
-    strlist_t order_list;
-    strlist_t disable_list;
+    *cancel = true;
+    return true;
+}
 
-    /* dictionary directory */
-    dicts_dir_list.push_back(std::string("/home/user/MyDocs/mstardict"));
-    for_each_file(dicts_dir_list, ".ifo", order_list, disable_list, GetAllDictList(dict_list));
+gboolean
+MStarDict::onMainWindowKeyPressEvent(GtkWidget *window,
+				     GdkEventKey *event,
+				     MStarDict *mStarDict)
+{
+    if (event->type == GDK_KEY_PRESS && event->keyval == GDK_KP_Enter) {
+	mStarDict->SearchWord();
+    }
+    return false;
+}
+
+GtkWidget *
+MStarDict::CreateLookupProgressDialog(bool *cancel)
+{
+    GtkWidget *dialog, *progress;
+
+    /* create dialog */
+    dialog = gtk_dialog_new();
+    gtk_window_set_title(GTK_WINDOW(dialog), _("Searching"));
+    gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(main_window));
+    gtk_dialog_add_button(GTK_DIALOG(dialog), _("Cancel"), GTK_RESPONSE_OK);
+
+    g_signal_connect(dialog, "response", G_CALLBACK(onLookupProgressDialogResponse), cancel);
+
+    /* add progress bar */
+    progress = gtk_progress_bar_new();
+    gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), progress);
+    g_object_set_data(G_OBJECT(dialog), "progress", progress);
+
+    /* show dialog */
+    gtk_widget_show_all(dialog);
+
+    while (gtk_events_pending())
+	gtk_main_iteration();
+
+    return dialog;
 }
 
 void
-MStarDict::LoadDictionaries()
+MStarDict::DestroyLookupProgressDialog(GtkWidget *dialog)
 {
-    std::list < std::string > dict_list;
-
-    if (!oConf->GetStringList("/apps/maemo/mstardict/dict_list", dict_list)) {
-	GetAllDictionaryList(dict_list);
-	oConf->SetStringList("/apps/maemo/mstardict/dict_list", dict_list);
-    }
-
-    oLibs->load(dict_list);
-    oLibs->query_dictmask.clear();
-    for (std::list < std::string >::iterator i = dict_list.begin(); i != dict_list.end(); ++i) {
-	size_t iLib;
-	if (oLibs->find_lib_by_filename(i->c_str(), iLib)) {
-	    InstantDictIndex instance_dict_index;
-	    instance_dict_index.type = InstantDictType_LOCAL;
-	    instance_dict_index.index = iLib;
-	    oLibs->query_dictmask.push_back(instance_dict_index);
-	}
-    }
-
-    if (oLibs->iCurrentIndex)
-	g_free(oLibs->iCurrentIndex);
-    oLibs->iCurrentIndex =
-	(CurrentIndex *) g_malloc(sizeof(CurrentIndex) * oLibs->query_dictmask.size());
-
-    if (oLibs->query_dictmask.empty())
-	ShowNoDictionary(true);
-}
-
-void
-MStarDict::ReLoadDictionaries(std::list < std::string > &dict_list)
-{
-    oLibs->reload(dict_list, 0, 0);
-    oLibs->query_dictmask.clear();
-    for (std::list < std::string >::iterator i = dict_list.begin(); i != dict_list.end(); ++i) {
-	size_t iLib;
-	if (oLibs->find_lib_by_filename(i->c_str(), iLib)) {
-	    InstantDictIndex instance_dict_index;
-	    instance_dict_index.type = InstantDictType_LOCAL;
-	    instance_dict_index.index = iLib;
-	    oLibs->query_dictmask.push_back(instance_dict_index);
-	}
-    }
-
-    if (oLibs->iCurrentIndex)
-	g_free(oLibs->iCurrentIndex);
-    oLibs->iCurrentIndex =
-	(CurrentIndex *) g_malloc(sizeof(CurrentIndex) * oLibs->query_dictmask.size());
-
-    if (oLibs->query_dictmask.empty())
-	ShowNoDictionary(true);
+    gtk_widget_destroy(GTK_WIDGET(dialog));
 }
 
 void
@@ -527,6 +383,7 @@ MStarDict::CreateMainWindow()
 
     /* window signals */
     g_signal_connect(G_OBJECT(main_window), "destroy", G_CALLBACK(gtk_main_quit), NULL);
+    g_signal_connect(G_OBJECT(main_window), "key_press_event", G_CALLBACK(onMainWindowKeyPressEvent), this);
 
     /* show all widget instead of alignment */
     gtk_widget_show_all(GTK_WIDGET(main_window));
@@ -561,6 +418,41 @@ MStarDict::CreateMainMenu()
 }
 
 void
+MStarDict::SearchWord()
+{
+    const gchar *sWord;
+    bool bFound = false;
+    std::string query;
+
+    if (oLibs->query_dictmask.empty())
+	return;
+
+    sWord = gtk_entry_get_text(GTK_ENTRY(search));
+    if (strcmp(sWord, "") == 0) {
+	ShowNoResults(true);
+    } else {
+	/* unselect rows */
+	ResultsUnselectAll(GTK_SELECTION_NONE);
+
+	switch (analyse_query(sWord, query)) {
+	case qtDATA:
+	    bFound = oLibs->LookupData(query.c_str());
+	    break;
+	default:
+	    /* nothing */ ;
+	}
+
+	/* unselect selected rows */
+	ResultsUnselectAll(GTK_SELECTION_SINGLE);
+
+	if (bFound)
+	    ShowNoResults(false);
+	else
+	    ShowNoResults(true);
+    }
+}
+
+void
 MStarDict::ResultsListClear()
 {
     gtk_list_store_clear(results_list);
@@ -575,9 +467,19 @@ MStarDict::ResultsListInsertLast(const gchar *word)
 }
 
 void
-MStarDict::ReScroll()
+MStarDict::ResultsReScroll()
 {
     hildon_pannable_area_scroll_to(HILDON_PANNABLE_AREA(results_view_scroll), -1, 0);
+}
+
+void
+MStarDict::ResultsUnselectAll(GtkSelectionMode mode)
+{
+    GtkTreeSelection *selection;
+
+    selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(results_view));
+    gtk_tree_selection_set_mode(selection, mode);
+    gtk_tree_selection_unselect_all(selection);
 }
 
 void
@@ -630,13 +532,12 @@ main(int argc,
 
     /* create main window */
     MStarDict mStarDict;
-    pMStarDict = &mStarDict;
     mStarDict.CreateMainWindow();
     mStarDict.CreateMainMenu();
     mStarDict.ShowNoResults(true);
 
-    /* load all dictionaries */
-    mStarDict.LoadDictionaries();
+    /* load dictionaries */
+    mStarDict.oDict->LoadDictionaries();
 
     gtk_main();
     return 0;

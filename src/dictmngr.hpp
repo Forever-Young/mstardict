@@ -2,6 +2,12 @@
  *  MStarDict - International dictionary for Maemo.
  *  Copyright (C) 2010 Roman Moravcik
  *
+ *  base on code of stardict:
+ *  Copyright (C) 2003-2007 Hu Zheng <huzheng_001@163.com>
+ *
+ *  based on code of sdcv:
+ *  Copyright (C) 2005-2006 Evgeniy <dushistov@mail.ru>
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
@@ -17,19 +23,18 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <gconf/gconf.h>
-#include <gconf/gconf-client.h>
+class MStarDict;
 
-class Conf {
+class DictMngr {
   private:
-    GConfClient *gconf_client;
+    MStarDict *oStarDict;
 
   public:
-    Conf();
-    ~Conf();
+    DictMngr(MStarDict *mStarDict);
+    ~DictMngr();
 
-    bool GetStringList(const gchar *key,
-		       std::list < std::string > &list);
-    bool SetStringList(const gchar *key,
-		       std::list < std::string > &list);
+    void CreateDictMngrDialog();
+    void GetAllDictionaryList(std::list < std::string > &dict_list);
+    void LoadDictionaries();
+    void ReLoadDictionaries(std::list < std::string > &dict_list);
 };

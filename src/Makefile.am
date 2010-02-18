@@ -2,6 +2,7 @@ SUBDIRS=lib
 bin_PROGRAMS = mstardict
 mstardict_SOURCES = \
 	conf.cpp conf.hpp \
+	dictmngr.cpp dictmngr.hpp \
 	libwrapper.cpp libwrapper.hpp \
 	mstardict.cpp mstardict.hpp
 
