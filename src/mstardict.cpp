@@ -51,6 +51,8 @@
 #include "libwrapper.hpp"
 #include "mstardict.hpp"
 
+MStarDict *pMStarDict;
+
 enum {
     DEF_COLUMN,
     N_COLUMNS
@@ -71,6 +73,13 @@ MStarDict::MStarDict()
     /* initialize configuration */
     oConf = new Conf();
 
+    /* initialize stardict plugins */
+    std::list < std::string > plugin_order_list;
+    std::list < std::string > plugin_disable_list;
+    oStarDictPlugins = new StarDictPlugins("/usr/lib/mstardict/plugins",
+					   plugin_order_list,
+					   plugin_disable_list);
+
     /* initialize dict manager */
     oDict = new DictMngr(this);
 
@@ -88,6 +97,9 @@ MStarDict::~MStarDict()
 
     /* deinitialize dict manager */
     delete oDict;
+
+    /* deinitialize stardict plugins */
+    delete oStarDictPlugins;
 
     /* deinitialize configuration */
     delete oConf;
@@ -138,7 +150,7 @@ MStarDict::onResultsViewSelectionChanged(GtkTreeSelection *selection,
     }
 
     /* grab focus to search entry */
-    gtk_widget_grab_focus(GTK_WIDGET(mStarDict->search));
+    mStarDict->GrabFocus();
 
     return true;
 }
@@ -240,6 +252,8 @@ MStarDict::onMainWindowKeyPressEvent(GtkWidget *window,
 {
     if (event->type == GDK_KEY_PRESS && event->keyval == GDK_KP_Enter) {
 	mStarDict->SearchWord();
+    } else if (event->type == GDK_KEY_PRESS && event->keyval >= 0x21 && event->keyval <= 0x7E) {
+	mStarDict->GrabFocus();
     }
     return false;
 }
@@ -260,7 +274,7 @@ MStarDict::CreateLookupProgressDialog(bool *cancel)
     /* add progress bar */
     progress = gtk_progress_bar_new();
     gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), progress);
-    g_object_set_data(G_OBJECT(dialog), "progress", progress);
+    g_object_set_data(G_OBJECT(dialog), "progress_bar", progress);
 
     /* show dialog */
     gtk_widget_show_all(dialog);
@@ -374,7 +388,11 @@ MStarDict::CreateMainWindow()
     gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW
 						(results_view), -1, "Def",
 						renderer, "text", DEF_COLUMN, NULL);
-    g_object_set(G_OBJECT(renderer), "xpad", 10, NULL);
+    g_object_set(G_OBJECT(renderer),
+		 "xpad", 10,
+		 "ellipsize", PANGO_ELLIPSIZE_END,
+		 "ellipsize-set", TRUE,
+		 NULL);
 
     /* search entry */
     search = hildon_entry_new(HILDON_SIZE_FINGER_HEIGHT);
@@ -389,7 +407,7 @@ MStarDict::CreateMainWindow()
     gtk_widget_show_all(GTK_WIDGET(main_window));
 
     /* grab focus to search entry */
-    gtk_widget_grab_focus(GTK_WIDGET(search));
+    GrabFocus();
 }
 
 void
@@ -517,6 +535,12 @@ MStarDict::ShowProgressIndicator(bool bShow)
 	hildon_gtk_window_set_progress_indicator(GTK_WINDOW(main_window), 0);
 }
 
+void
+MStarDict::GrabFocus()
+{
+    gtk_widget_grab_focus(GTK_WIDGET(search));
+}
+
 int
 main(int argc,
      char **argv)
@@ -532,6 +556,7 @@ main(int argc,
 
     /* create main window */
     MStarDict mStarDict;
+    pMStarDict = &mStarDict;
     mStarDict.CreateMainWindow();
     mStarDict.CreateMainMenu();
     mStarDict.ShowNoResults(true);

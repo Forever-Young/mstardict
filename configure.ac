@@ -1,7 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.52)
 
-AC_INIT(mstardict, 0.3, roman.moravcik@gmail.com)
+AC_INIT(mstardict, 0.4, roman.moravcik@gmail.com)
 AC_CONFIG_SRCDIR(src/mstardict.cpp)
 
 dnl Don't include maintainer make-rules by default
@@ -17,6 +17,7 @@ AC_LANG([C++])
 AC_PROG_CXXCPP
 AC_PROG_MAKE_SET
 AC_PROG_RANLIB
+AM_PROG_LIBTOOL
 
 dnl ================================================================
 dnl Gettext stuff.
@@ -49,9 +50,14 @@ AC_OUTPUT([
  data/Makefile
  data/mstardict.desktop.in
  m4/Makefile
- src/lib/Makefile
- src/Makefile
  po/Makefile.in
+ src/Makefile
+ src/lib/Makefile
+ stardict-plugins/Makefile
+ stardict-plugins/stardict-html-parsedata-plugin/Makefile
+ stardict-plugins/stardict-powerword-parsedata-plugin/Makefile
+ stardict-plugins/stardict-wiki-parsedata-plugin/Makefile
+ stardict-plugins/stardict-xdxf-parsedata-plugin/Makefile
 ])
 
 echo "

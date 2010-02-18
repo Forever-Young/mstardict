@@ -105,7 +105,12 @@ DictMngr::CreateDictMngrDialog()
     gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), selector);
 
     renderer = gtk_cell_renderer_text_new();
-    g_object_set(G_OBJECT(renderer), "xpad", 10, NULL);
+    g_object_set(G_OBJECT(renderer),
+		 "xpad", 10,
+		 "ellipsize", PANGO_ELLIPSIZE_END,
+		 "ellipsize-set", TRUE,
+		 NULL);
+
     column =
 	hildon_touch_selector_append_column(HILDON_TOUCH_SELECTOR
 					    (selector),

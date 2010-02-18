@@ -24,7 +24,7 @@ configure-stamp:
 	dh_testdir
 
 	./autogen.sh
-	./configure --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --prefix=/usr --disable-static CFLAGS="$(CFLAGS)" LDFLAGS="-Wl,-z,defs"
+	./configure --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --prefix=/usr --disable-static
 
 	touch $@
 
@@ -44,7 +44,7 @@ clean:
 	rm -f build-stamp configure-stamp
 
 	[ ! -f Makefile ] || $(MAKE) distclean
-	rm -f Makefile.in aclocal.m4 compile config.guess config.h.in config.rpath config.sub configure data/Makefile.in depcomp install-sh intltool-extract.in intltool-merge.in intltool-update.in ltmain.sh m4/Makefile.in missing mkinstalldirs po/Makefile.in.in src/Makefile.in src/lib/Makefile.in
+	rm -f Makefile.in aclocal.m4 compile config.guess config.h.in config.rpath config.sub configure data/Makefile.in depcomp install-sh intltool-extract.in intltool-merge.in intltool-update.in ltmain.sh m4/Makefile.in missing mkinstalldirs po/Makefile.in.in src/Makefile.in src/lib/Makefile.in stardict-plugins/Makefile.in stardict-plugins/stardict-html-parsedata-plugin/Makefile.in stardict-plugins/stardict-powerword-parsedata-plugin/Makefile.in stardict-plugins/stardict-wiki-parsedata-plugin/Makefile.in stardict-plugins/stardict-xdxf-parsedata-plugin/Makefile.in
 
 	dh_clean 
 

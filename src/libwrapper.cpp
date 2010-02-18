@@ -107,27 +107,82 @@ std::string xdxf2text(const char *p)
 }
 
 static
-string parse_data(const gchar *data)
+string parse_data(const gchar *data,
+		  const gchar *oword)
 {
     if (!data)
 	return "";
 
-    string res;
+    string mark;
     guint32 data_size, sec_size = 0;
     gchar *m_str;
     const gchar *p = data;
     data_size = *((guint32 *) p);
     p += sizeof(guint32);
+    size_t iPlugin;
+    size_t nPlugins = pMStarDict->oStarDictPlugins->ParseDataPlugins.nplugins();
+    unsigned int parsed_size;
+    ParseResult parse_result;
+
     while (guint32(p - data) < data_size) {
+	for (iPlugin = 0; iPlugin < nPlugins; iPlugin++) {
+	    parse_result.clear();
+	    if (pMStarDict->oStarDictPlugins->ParseDataPlugins.parse(iPlugin, p, &parsed_size, parse_result, oword)) {
+		p += parsed_size;
+		break;
+	    }
+	}
+	if (iPlugin != nPlugins) {
+	    for (std::list<ParseResultItem>::iterator it = parse_result.item_list.begin(); it != parse_result.item_list.end(); ++it) {
+		switch (it->type) {
+		    case ParseResultItemType_mark:
+			g_debug("ParseResultItemType_mark");
+			mark += it->mark->pango;
+			break;
+		    case ParseResultItemType_link:
+//			g_debug("ParseResultItemType_link: %s", it->mark->pango.c_str());
+			mark += it->mark->pango;
+			break;
+		    case ParseResultItemType_res:
+		    {
+			g_debug("ParseResultItemType_res");
+			bool loaded = false;
+			if (it->res->type == "image") {
+			} else if (it->res->type == "sound") {
+			} else if (it->res->type == "video") {
+			} else {
+			}
+			if (!loaded) {
+			    mark += "<span foreground=\"red\">";
+			    gchar *m_str = g_markup_escape_text(it->res->key.c_str(), -1);
+			    mark += m_str;
+			    g_free(m_str);
+			    mark += "</span>";
+			}
+			break;
+		    }
+		    case ParseResultItemType_widget:
+			g_debug("ParseResultItemType_widget");
+			break;
+		    default:
+			g_debug("ParseResultItemType_default");
+			break;
+		}
+	    }
+	    parse_result.clear();
+	    continue;
+	}
+
 	switch (*p++) {
 	case 'g':
+	case 'h':
 	case 'm':
 	case 'l':		//need more work...
 	    sec_size = strlen(p);
 	    if (sec_size) {
-		res += "\n";
+		mark += "\n";
 		m_str = g_strndup(p, sec_size);
-		res += m_str;
+		mark += m_str;
 		g_free(m_str);
 	    }
 	    sec_size++;
@@ -135,9 +190,9 @@ string parse_data(const gchar *data)
 	case 'x':
 	    sec_size = strlen(p);
 	    if (sec_size) {
-		res += "\n";
+		mark += "\n";
 		m_str = g_strndup(p, sec_size);
-		res += xdxf2text(m_str);
+		mark += xdxf2text(m_str);
 		g_free(m_str);
 	    }
 	    sec_size++;
@@ -145,9 +200,9 @@ string parse_data(const gchar *data)
 	case 't':
 	    sec_size = strlen(p);
 	    if (sec_size) {
-		res += "\n";
+		mark += "\n";
 		m_str = g_strndup(p, sec_size);
-		res += "[" + string(m_str) + "]";
+		mark += "[" + string(m_str) + "]";
 		g_free(m_str);
 	    }
 	    sec_size++;
@@ -165,7 +220,7 @@ string parse_data(const gchar *data)
 	p += sec_size;
     }
 
-    return res;
+    return mark;
 }
 
 void
@@ -204,6 +259,7 @@ Library::BuildResultData(std::vector < InstantDictIndex > &dictmask,
     int iRealLib;
     bool bFound = false, bLookupWord = false, bLookupSynonymWord = false;
     gint nWord = 0, count = 0, i = 0, j = 0;
+    glong iWordIdx;
 
     iRealLib = dictmask[iLib].index;
 
@@ -237,22 +293,20 @@ Library::BuildResultData(std::vector < InstantDictIndex > &dictmask,
 	    count = GetOrigWordCount(iIndex[iLib].idx, iRealLib, true);
 	    for (i = 0; i < count; i++) {
 		res_list.push_back(TSearchResult(dict_name(iLib),
-						 poGetWord(iIndex[iLib].idx, iRealLib,
-							   0),
-						 parse_data
-						 (poGetOrigWordData
-						  (iIndex[iLib].idx + i, iRealLib))));
+						 poGetOrigWord(iIndex[iLib].idx, iRealLib),
+						 parse_data(poGetOrigWordData(iIndex[iLib].idx + i, iRealLib),
+							    poGetOrigWord(iIndex[iLib].idx, iRealLib))));
 	    }
 	    i = 1;
 	} else {
 	    i = 0;
 	}
 	for (j = 0; i < nWord; i++, j++) {
+	    iWordIdx = poGetOrigSynonymWordIdx(iIndex[iLib].synidx + j, iRealLib);
 	    res_list.push_back(TSearchResult(dict_name(iLib),
-					     poGetWord(iIndex[iLib].synidx + j,
-						       iRealLib, 0),
-					     parse_data(poGetOrigWordData
-							(iIndex[iLib].synidx + j, iRealLib))));
+					     poGetOrigWord(iWordIdx, iRealLib),
+					     parse_data(poGetOrigWordData(iWordIdx, iRealLib),
+							poGetOrigWord(iWordIdx, iRealLib))));
 	}
 
 	bFound = true;
@@ -369,7 +423,7 @@ LookupProgressDialogUpdate(gpointer data,
     GtkWidget *dialog = GTK_WIDGET(data);
     GtkWidget *progress;
 
-    progress = GTK_WIDGET(g_object_get_data(G_OBJECT(dialog), "progress"));
+    progress = GTK_WIDGET(g_object_get_data(G_OBJECT(dialog), "progress_bar"));
     gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(progress), fraction);
 
     while (gtk_events_pending())

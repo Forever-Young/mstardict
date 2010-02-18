@@ -26,6 +26,10 @@
 #include <gtk/gtk.h>
 #include <hildon/hildon.h>
 
+#include "lib/pluginmanager.h"
+
+extern MStarDict *pMStarDict;
+
 class Conf;
 class DictMngr;
 class Library;
@@ -66,6 +70,7 @@ class MStarDict {
     Conf *oConf;
     DictMngr *oDict;
     Library *oLibs;
+    StarDictPlugins *oStarDictPlugins;
 
     GtkWidget *CreateLookupProgressDialog(bool *cancel);
     void DestroyLookupProgressDialog(GtkWidget *dialog);
@@ -84,4 +89,5 @@ class MStarDict {
     void ShowNoResults(bool bNoResults);
     void ShowNoDictionary(bool bNoDictionary);
     void ShowProgressIndicator(bool bShow);
+    void GrabFocus();
 };
