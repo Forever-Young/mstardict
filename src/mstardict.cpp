@@ -215,13 +215,23 @@ MStarDict::onSearchEntryChanged(GtkEditable* editable,
 }
 
 gboolean
+MStarDict::onSearchClearClicked(GtkButton* button,
+				MStarDict* mStarDict)
+{
+    gtk_entry_set_text(GTK_ENTRY(mStarDict->search_entry), "");
+    mStarDict->GrabFocus();
+    return true;
+}
+
+gboolean
 MStarDict::onDictionariesMenuItemClicked(GtkButton *button,
 					 MStarDict *mStarDict)
 {
     mStarDict->oDict->CreateDictMngrDialog();
 
     /* trigger re-search */
-    mStarDict->onSearchEntryChanged(GTK_EDITABLE(mStarDict->search), mStarDict);
+    mStarDict->onSearchEntryChanged(GTK_EDITABLE(mStarDict->search_entry), mStarDict);
+    mStarDict->GrabFocus();
     return true;
 }
 
@@ -292,7 +302,7 @@ void
 MStarDict::CreateMainWindow()
 {
     HildonProgram *program = NULL;
-    GtkWidget *alignment, *vbox;
+    GtkWidget *alignment, *main_vbox, *search;
     GtkCellRenderer *renderer;
     GtkTreeSelection *selection;
 
@@ -311,21 +321,21 @@ MStarDict::CreateMainWindow()
     gtk_container_add(GTK_CONTAINER(window), alignment);
 
     /* main vbox */
-    vbox = gtk_vbox_new(FALSE, 0);
-    gtk_container_add(GTK_CONTAINER(alignment), vbox);
+    main_vbox = gtk_vbox_new(FALSE, 0);
+    gtk_container_add(GTK_CONTAINER(alignment), main_vbox);
 
     /* no_search_result label */
     label_widget = gtk_label_new(_("No search result"));
     hildon_helper_set_logical_color(label_widget, GTK_RC_FG,
 				    GTK_STATE_NORMAL, "SecondaryTextColor");
     hildon_helper_set_logical_font(label_widget, "LargeSystemFont");
-    gtk_box_pack_start(GTK_BOX(vbox), label_widget, TRUE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(main_vbox), label_widget, TRUE, TRUE, 0);
 
     /* alignment for pannable area */
     results_widget = gtk_alignment_new(0.5, 0.5, 1.0, 1.0);
     gtk_alignment_set_padding(GTK_ALIGNMENT(results_widget),
 			      0, 0, HILDON_MARGIN_DEFAULT, HILDON_MARGIN_DEFAULT);
-    gtk_box_pack_start(GTK_BOX(vbox), results_widget, TRUE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(main_vbox), results_widget, TRUE, TRUE, 0);
 
     /* pannable for tree view */
     results_view_scroll = hildon_pannable_area_new();
@@ -350,10 +360,9 @@ MStarDict::CreateMainWindow()
 		 "ellipsize-set", TRUE,
 		 NULL);
 
-    /* search entry */
-    search = hildon_entry_new(HILDON_SIZE_FINGER_HEIGHT);
-    gtk_box_pack_end(GTK_BOX(vbox), search, FALSE, TRUE, 0);
-    g_signal_connect(search, "changed", G_CALLBACK(onSearchEntryChanged), this);
+    /* create search bar */
+    search = CreateSearchBar();
+    gtk_box_pack_end(GTK_BOX(main_vbox), search, FALSE, TRUE, 0);
 
     /* window signals */
     g_signal_connect(G_OBJECT(window), "destroy", G_CALLBACK(gtk_main_quit), NULL);
@@ -365,6 +374,40 @@ MStarDict::CreateMainWindow()
     /* grab focus to search entry */
     GrabFocus();
 }
+
+GtkWidget *
+MStarDict::CreateSearchBar()
+{
+    GtkWidget *hbox, *entry, *button;
+    GtkEntryCompletion *completion;
+
+    /* search hbox */
+    hbox = gtk_hbox_new(FALSE, HILDON_MARGIN_DEFAULT);
+
+    /* search entry */
+    entry = hildon_entry_new(HILDON_SIZE_FINGER_HEIGHT);
+    hildon_gtk_entry_set_input_mode(GTK_ENTRY(entry), HILDON_GTK_INPUT_MODE_FULL);
+    gtk_box_pack_start(GTK_BOX(hbox), entry, TRUE, TRUE, 0);
+
+    completion = gtk_entry_completion_new();
+    gtk_entry_completion_set_inline_completion(completion, TRUE);
+    gtk_entry_completion_set_popup_completion(completion, FALSE);
+    gtk_entry_set_completion(GTK_ENTRY(entry), completion);
+
+    /* clear button */
+    button = GTK_WIDGET(gtk_tool_button_new(gtk_image_new_from_icon_name("general_delete",
+									 (GtkIconSize)HILDON_ICON_PIXEL_SIZE_FINGER),
+					    "Clear"));
+    gtk_box_pack_end(GTK_BOX (hbox), button, FALSE, TRUE, 0);
+
+    /* search signals */
+    g_signal_connect(entry, "changed", G_CALLBACK(onSearchEntryChanged), this);
+    g_signal_connect(button, "clicked", G_CALLBACK(onSearchClearClicked), this);
+
+    search_entry = entry;
+    return hbox;
+}
+
 
 void
 MStarDict::CreateMainMenu()
@@ -401,7 +444,7 @@ MStarDict::SearchWord()
     if (oLibs->query_dictmask.empty())
 	return;
 
-    sWord = gtk_entry_get_text(GTK_ENTRY(search));
+    sWord = gtk_entry_get_text(GTK_ENTRY(search_entry));
     if (strcmp(sWord, "") == 0) {
 	ShowNoResults(true);
     } else {
@@ -494,7 +537,7 @@ MStarDict::ShowProgressIndicator(bool bShow)
 void
 MStarDict::GrabFocus()
 {
-    gtk_widget_grab_focus(GTK_WIDGET(search));
+    gtk_widget_grab_focus(GTK_WIDGET(search_entry));
 }
 
 int

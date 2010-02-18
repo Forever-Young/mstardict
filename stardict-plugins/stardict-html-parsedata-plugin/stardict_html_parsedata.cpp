@@ -92,10 +92,10 @@ static void html_topango(const std::string& str, std::string &pango, size_t &pan
 	const char *q, *p;
 	static const char* xml_entrs[] = { "lt;", "gt;", "amp;", "apos;", "quot;", 0 };
 	static const int xml_ent_len[] = { 3,     3,     4,      5,       5 };
-	static const char* html_entries[] = {"nbsp;", 0};
-	static const int html_entry_len[] = {5};
-	static const char* html_values[] = {" "};
-	static const int html_value_len[] = {1};
+	static const char* html_entries[] = {"nbsp;", "middot;", "agrave;", "eacute;", 0};
+	static const int html_entry_len[] = {5,        7,        7,         7 };
+	static const char* html_values[] =  {" ",     "·",       "à",       "é" };
+	static const int html_value_len[] = {1,       1,         1,         1};
 	size_t cur_pos;
 	int i;
 	char *etext;

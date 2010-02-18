@@ -88,6 +88,7 @@ TransWin::CreateTransWidget(SearchResult *result)
     label = gtk_label_new("Expresion");
     gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.0);
     gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+    gtk_widget_set_size_request(label, 750, -1);
     gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
     if (exp) {
 	gtk_label_set_markup(GTK_LABEL(label), exp);

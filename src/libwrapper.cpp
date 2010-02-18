@@ -68,7 +68,6 @@ string parse_data(const gchar *data,
 			mark += it->mark->pango;
 			break;
 		    case ParseResultItemType_link:
-//			g_debug("ParseResultItemType_link: %s", it->mark->pango.c_str());
 			mark += it->mark->pango;
 			break;
 		    case ParseResultItemType_res:

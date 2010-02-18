@@ -41,7 +41,7 @@ class MStarDict {
     GtkWidget *window;
     GtkWidget *label_widget;
     GtkWidget *results_widget;
-    GtkWidget *search;
+    GtkWidget *search_entry;
     GtkWidget *results_view;
     GtkWidget *results_view_scroll;
 
@@ -50,6 +50,8 @@ class MStarDict {
     static gboolean onResultsViewSelectionChanged(GtkTreeSelection *selection,
 						  MStarDict *mStarDict);
     static gboolean onSearchEntryChanged(GtkEditable *editable,
+					 MStarDict *mStarDict);
+    static gboolean onSearchClearClicked(GtkButton *button,
 					 MStarDict *mStarDict);
     static gboolean onDictionariesMenuItemClicked(GtkButton *button,
 						  MStarDict *mStarDict);
@@ -75,6 +77,7 @@ class MStarDict {
     GtkWidget *CreateLookupProgressDialog(bool *cancel);
     void DestroyLookupProgressDialog(GtkWidget *dialog);
     void CreateMainWindow();
+    GtkWidget *CreateSearchBar();
     void CreateMainMenu();
 
     void SearchWord();

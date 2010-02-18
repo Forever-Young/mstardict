@@ -1,3 +1,11 @@
+mstardict (0.4-3) unstable; urgency=low
+
+  * Make package depend of ttf-freefont.
+  * Added clear button.
+  * Fixed wrapping of lines in translation window.
+
+ -- Roman Moravcik <roman.moravcik@gmail.com>  Wed, 10 Feb 2010 15:03:58 +0100
+
 mstardict (0.4-2) unstable; urgency=low
 
   * Reimplemented parser.

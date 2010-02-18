@@ -7,7 +7,7 @@ Standards-Version: 3.8.3
 
 Package: mstardict
 Architecture: any
-Depends: ${shlibs:Depends}
+Depends: ${shlibs:Depends}, ttf-freefont
 Description: International dictionary for Maemo
  MStarDict is a StarDict clone written with using Gtk2 for Maemo.
  It can use StarDict DICT files as a word database for translation.
