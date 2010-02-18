@@ -2,4 +2,6 @@
 src/dictmngr.cpp
 src/libwrapper.cpp
 src/mstardict.cpp
+src/prefsdlg.cpp
 src/transwin.cpp
+src/tts.cpp

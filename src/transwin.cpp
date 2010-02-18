@@ -40,16 +40,28 @@
 
 #include "libwrapper.hpp"
 #include "mstardict.hpp"
+#include "tts.hpp"
 #include "transwin.hpp"
 
 TransWin::TransWin(MStarDict *mStarDict)
 {
     oStarDict = mStarDict;
     window = NULL;
+    sExpression = NULL;
 }
 
 TransWin::~TransWin()
 {
+    if (sExpression)
+	g_free(sExpression);
+}
+
+gboolean
+TransWin::onSayMenuItemClicked(GtkButton *button,
+			       TransWin *mTransWin)
+{
+    mTransWin->oStarDict->oTts->SayText(mTransWin->sExpression);
+    return true;
 }
 
 GtkWidget *
@@ -60,21 +72,21 @@ TransWin::CreateTransWidget(SearchResult *result)
 
     bookname = g_markup_printf_escaped("<span color=\"dimgray\" size=\"x-small\">%s</span>",
 				       result->bookname);
-    def = g_markup_printf_escaped("<span color=\"darkred\" weight=\"heavy\" size=\"large\">%s</span>",
-				  result->def);
-    exp = g_strdup(result->exp);
+    exp = g_markup_printf_escaped("<span color=\"darkred\" weight=\"heavy\" size=\"large\">%s</span>",
+				  result->exp);
+    def = g_strdup(result->def);
 
     vbox = gtk_vbox_new(FALSE, 0);
 
     hbox = gtk_hbox_new(FALSE, 0);
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
-    label = gtk_label_new("Definition");
+    label = gtk_label_new("Expression");
     gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
     gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-    if (def) {
-	gtk_label_set_markup(GTK_LABEL(label), def);
-	g_free(def);
+    if (exp) {
+	gtk_label_set_markup(GTK_LABEL(label), exp);
+	g_free(exp);
     }
 
     label = gtk_label_new("Bookname");
@@ -85,15 +97,18 @@ TransWin::CreateTransWidget(SearchResult *result)
 	g_free(bookname);
     }
 
-    label = gtk_label_new("Expresion");
+    label = gtk_label_new("Definition");
     gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.0);
     gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
     gtk_widget_set_size_request(label, 750, -1);
     gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
-    if (exp) {
-	gtk_label_set_markup(GTK_LABEL(label), exp);
-	g_free(exp);
+    if (def) {
+	gtk_label_set_markup(GTK_LABEL(label), def);
+	g_free(def);
     }
+
+    if (sExpression == NULL)
+	sExpression = g_strdup(result->exp);
 
     return vbox;
 }
@@ -101,7 +116,7 @@ TransWin::CreateTransWidget(SearchResult *result)
 void
 TransWin::CreateTransWindow(GList *results)
 {
-    GtkWidget *window, *alignment, *pannable, *vbox, *trans, *separator;
+    GtkWidget *alignment, *pannable, *vbox, *trans, *separator;
     GList *result = NULL;
 
     window = hildon_stackable_window_new();
@@ -119,6 +134,10 @@ TransWin::CreateTransWindow(GList *results)
     vbox = gtk_vbox_new(FALSE, 16);
     hildon_pannable_area_add_with_viewport(HILDON_PANNABLE_AREA(pannable), vbox);
 
+    if (sExpression)
+	g_free(sExpression);
+    sExpression = NULL;
+
     for (result = results; result != NULL; result = result->next) {
 	trans = CreateTransWidget((SearchResult *) result->data);
 	gtk_box_pack_start(GTK_BOX(vbox), trans, FALSE, FALSE, 0);
@@ -127,5 +146,30 @@ TransWin::CreateTransWindow(GList *results)
 	gtk_box_pack_start(GTK_BOX(vbox), separator, FALSE, FALSE, 0);
     }
 
+    /* create translation menu */
+    CreateTransMenu();
+
     gtk_widget_show_all(window);
 }
+
+void
+TransWin::CreateTransMenu()
+{
+    HildonAppMenu *menu;
+    GtkWidget *item;
+
+    menu = HILDON_APP_MENU(hildon_app_menu_new());
+    hildon_window_set_app_menu(HILDON_WINDOW(window), menu);
+
+    /* Say menu item */
+    if (oStarDict->oTts->IsEnabled()) {
+	item = hildon_gtk_button_new(HILDON_SIZE_AUTO);
+	gtk_button_set_label(GTK_BUTTON(item), _("Say"));
+	hildon_app_menu_append(menu, GTK_BUTTON(item));
+	g_signal_connect(item, "clicked", G_CALLBACK(onSayMenuItemClicked), this);
+    }
+
+    /* show main menu */
+    gtk_widget_show_all(GTK_WIDGET(menu));
+}
+

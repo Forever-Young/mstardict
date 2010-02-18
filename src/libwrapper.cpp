@@ -48,14 +48,14 @@ string parse_data(const gchar *data,
     data_size = get_uint32(data);
     p += sizeof(guint32);
     size_t iPlugin;
-    size_t nPlugins = pMStarDict->oStarDictPlugins->ParseDataPlugins.nplugins();
+    size_t nPlugins = pMStarDict->oPlugins->ParseDataPlugins.nplugins();
     unsigned int parsed_size;
     ParseResult parse_result;
 
     while (guint32(p - data) < data_size) {
 	for (iPlugin = 0; iPlugin < nPlugins; iPlugin++) {
 	    parse_result.clear();
-	    if (pMStarDict->oStarDictPlugins->ParseDataPlugins.parse(iPlugin, p, &parsed_size, parse_result, oword)) {
+	    if (pMStarDict->oPlugins->ParseDataPlugins.parse(iPlugin, p, &parsed_size, parse_result, oword)) {
 		p += parsed_size;
 		break;
 	    }
@@ -287,8 +287,8 @@ Library::BuildResultData(std::vector < InstantDictIndex > &dictmask,
 	    for (i = 0; i < count; i++) {
 		result = (SearchResult *) g_malloc(sizeof(struct SearchResult));
 		result->bookname = g_strdup(dict_name(iLib).c_str());
-		result->def = g_strdup(poGetOrigWord(iIndex[iLib].idx, iRealLib));
-		result->exp = g_strdup(parse_data(poGetOrigWordData(iIndex[iLib].idx + i, iRealLib), poGetOrigWord(iIndex[iLib].idx, iRealLib)).c_str());
+		result->exp = g_strdup(poGetOrigWord(iIndex[iLib].idx, iRealLib));
+		result->def = g_strdup(parse_data(poGetOrigWordData(iIndex[iLib].idx + i, iRealLib), poGetOrigWord(iIndex[iLib].idx, iRealLib)).c_str());
 		*result_data = g_list_append(*result_data, result);
 	    }
 	    i = 1;
@@ -299,8 +299,8 @@ Library::BuildResultData(std::vector < InstantDictIndex > &dictmask,
 	    iWordIdx = poGetOrigSynonymWordIdx(iIndex[iLib].synidx + j, iRealLib);
 	    result = (SearchResult *) g_malloc(sizeof(struct SearchResult));
 	    result->bookname = g_strdup(dict_name(iLib).c_str());
-	    result->def = g_strdup(poGetOrigWord(iWordIdx, iRealLib));
-	    result->exp = g_strdup(parse_data(poGetOrigWordData(iWordIdx, iRealLib), poGetOrigWord(iWordIdx, iRealLib)).c_str());
+	    result->exp = g_strdup(poGetOrigWord(iWordIdx, iRealLib));
+	    result->def = g_strdup(parse_data(poGetOrigWordData(iWordIdx, iRealLib), poGetOrigWord(iWordIdx, iRealLib)).c_str());
 	    *result_data = g_list_append(*result_data, result);
 	}
 

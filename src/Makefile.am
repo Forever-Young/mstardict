@@ -5,7 +5,9 @@ mstardict_SOURCES = \
 	dictmngr.cpp dictmngr.hpp \
 	libwrapper.cpp libwrapper.hpp \
 	mstardict.cpp mstardict.hpp \
-	transwin.cpp transwin.hpp
+	prefsdlg.cpp prefsdlg.hpp \
+	transwin.cpp transwin.hpp \
+	tts.cpp tts.hpp
 
 mstardict_DEPENDENCIES = lib/libstardict.a
 mstardict_LDADD = @MSTARDICT_LIBS@ @LIBINTL@ lib/libstardict.a

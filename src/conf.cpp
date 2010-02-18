@@ -39,6 +39,105 @@ Conf::~Conf()
 {
 }
 
+bool Conf::GetBool(const gchar *key,
+		   bool *val)
+{
+    GConfValue *value = NULL;
+
+    if (!gconf_client)
+	return false;
+
+    value = gconf_client_get(gconf_client, key, NULL);
+    if (value) {
+	*val = gconf_value_get_bool(value);
+	gconf_value_free(value);
+    } else {
+	return false;
+    }
+    return true;
+}
+
+bool Conf::SetBool(const gchar *key,
+		   bool val)
+{
+    gboolean ret = false;
+
+    if (!gconf_client)
+	return false;
+
+    ret = gconf_client_set_bool(gconf_client, key, val, NULL);
+    return ret;
+}
+
+bool Conf::GetInt(const gchar *key,
+		  int *val)
+{
+    GConfValue *value = NULL;
+
+    if (!gconf_client)
+	return false;
+
+    value = gconf_client_get(gconf_client, key, NULL);
+    if (value) {
+	*val = gconf_value_get_int(value);
+	gconf_value_free(value);
+    } else {
+	return false;
+    }
+    return true;
+}
+
+bool Conf::SetInt(const gchar *key,
+		  int val)
+{
+    gboolean ret = false;
+
+    if (!gconf_client)
+	return false;
+
+    ret = gconf_client_set_int(gconf_client, key, val, NULL);
+    return ret;
+}
+
+bool Conf::GetString(const gchar *key,
+		     gchar **val)
+{
+    GConfValue *value = NULL;
+    const gchar *sValue = NULL;
+
+    if (!gconf_client)
+	return false;
+
+    value = gconf_client_get(gconf_client, key, NULL);
+    if (value) {
+	sValue = gconf_value_get_string(value);
+
+	if (*val)
+	    g_free(*val);
+	*val = g_strdup(sValue);
+
+	gconf_value_free(value);
+    } else {
+	return false;
+    }
+    return true;
+}
+
+bool Conf::SetString(const gchar *key,
+		     const gchar *val)
+{
+    gboolean ret = false;
+
+    if (!gconf_client)
+	return false;
+
+    if (!val)
+	return false;
+
+    ret = gconf_client_set_string(gconf_client, key, val, NULL);
+    return ret;
+}
+
 bool Conf::GetStringList(const gchar *key,
 			 std::list < std::string > &list)
 {

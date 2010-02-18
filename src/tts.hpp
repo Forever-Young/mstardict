@@ -23,52 +23,41 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef _LIBWRAPPER_HPP_
-#define _LIBWRAPPER_HPP_
+typedef struct {
+    const char *name;
+    const char *disp_name;
+} TtsVoice;
 
-#include <string>
-#include <vector>
-
-#include "file.hpp"
-#include "lib.h"
-
-struct SearchResult {
-	const gchar *bookname;
-	const gchar *exp;
-	const gchar *def;
-};
-
-using std::string;
-using std::vector;
 class MStarDict;
 
-//this class is wrapper around Dicts class for easy use
-//of it
-class Library:public Libs {
+class Tts {
   private:
     MStarDict *oStarDict;
+    bool Enabled;
+
+    GtkWidget *enable_button;
+    GtkWidget *gender_male_button;
+    GtkWidget *gender_female_button;
+    GtkWidget *language_button;
+
+    static gboolean onTtsEnableButtonClicked(GtkButton *button,
+					     Tts *oTts);
+    static gboolean onTtsGenderButtonClicked(GtkToggleButton *button1,
+					     GtkToggleButton *button2);
 
   public:
-    Library(MStarDict *mStarDict);
-    ~Library();
+     Tts(MStarDict *mStarDict);
+    ~Tts();
 
-    std::vector < InstantDictIndex > query_dictmask;
-    CurrentIndex *iCurrentIndex;
+    void Enable(bool bEnable);
+    bool IsEnabled();
 
-    void ListWords(CurrentIndex *iIndex);
-    bool BuildResultData(std::vector < InstantDictIndex > &dictmask,
-			 const char *sWord,
-			 CurrentIndex *iIndex,
-			 int iLib,
-			 GList **result_data);
-    void FreeResultData(GList *result_data);
+    void SetVoice(const gchar *language, int gender);
+    GtkListStore *GetVoicesList();
 
-    bool SimpleLookup(const gchar *sWord,
-		      CurrentIndex *piIndex);
-    bool LookupWithFuzzy(const gchar *sWord);
-    bool LookupWithRule(const gchar *sWord);
-    bool LookupWithRegex(const gchar *sWord);
-    bool LookupData(const gchar *sWord);
+    void SayText(const gchar *sText);
+
+    GtkWidget *CreateTtsConfWidget();
+    void TtsConfWidgetLoadConf();
+    void TtsConfWidgetSaveConf();
 };
-
-#endif	//!_LIBWRAPPER_HPP_

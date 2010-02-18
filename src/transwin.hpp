@@ -31,11 +31,17 @@ class TransWin {
     MStarDict *oStarDict;
     GtkWidget *window;
 
+    gchar *sExpression;
+
     GtkWidget *CreateTransWidget(SearchResult *result);
+
+    static gboolean onSayMenuItemClicked(GtkButton *button,
+					 TransWin *mTransWin);
 
   public:
      TransWin(MStarDict *mStarDict);
     ~TransWin();
 
     void CreateTransWindow(GList *result_data);
+    void CreateTransMenu();
 };

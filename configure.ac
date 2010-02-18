@@ -1,7 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.52)
 
-AC_INIT(mstardict, 0.4, roman.moravcik@gmail.com)
+AC_INIT(mstardict, 0.5, roman.moravcik@gmail.com)
 AC_CONFIG_SRCDIR(src/mstardict.cpp)
 
 dnl Don't include maintainer make-rules by default
@@ -40,6 +40,12 @@ MSTARDICT_CFLAGS="-Wall $MSTARDICT_CFLAGS"
 
 AC_SUBST(MSTARDICT_LIBS)
 AC_SUBST(MSTARDICT_CFLAGS)
+
+# check for libespeak (consider moving this to maemo5)
+AC_CHECK_HEADERS(espeak/speak_lib.h, [
+MSTARDICT_CFLAGS="$MSTARDICT_CFLAGS -DESPEAK"
+MSTARDICT_LIBS="$MSTARDICT_LIBS -lespeak"
+])
 
 dnl fill cflags for libstardict
 PKG_CHECK_MODULES(LIB_STARDICT, glib-2.0 >= 2.6.1 gtk+-2.0 >= 2.12 sigc++-2.0)

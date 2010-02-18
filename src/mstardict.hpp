@@ -35,6 +35,8 @@ class DictMngr;
 class TransWin;
 class Library;
 class MStarDict;
+class PrefsDlg;
+class Tts;
 
 class MStarDict {
   private:
@@ -55,6 +57,8 @@ class MStarDict {
 					 MStarDict *mStarDict);
     static gboolean onDictionariesMenuItemClicked(GtkButton *button,
 						  MStarDict *mStarDict);
+    static gboolean onPreferenciesMenuItemClicked(GtkButton *button,
+						  MStarDict *mStarDict);
     static gboolean onQuitMenuItemClicked(GtkButton *button,
 					  MStarDict *mStarDict);
     static gboolean onLookupProgressDialogResponse(GtkDialog *dialog,
@@ -72,11 +76,14 @@ class MStarDict {
     DictMngr *oDict;
     TransWin *oTransWin;
     Library *oLibs;
-    StarDictPlugins *oStarDictPlugins;
+    StarDictPlugins *oPlugins;
+    PrefsDlg *oPrefs;
+    Tts *oTts;
 
     GtkWidget *CreateLookupProgressDialog(bool *cancel);
     void DestroyLookupProgressDialog(GtkWidget *dialog);
     void CreateMainWindow();
+    GtkWidget *GetMainWindow();
     GtkWidget *CreateSearchBar();
     void CreateMainMenu();
 

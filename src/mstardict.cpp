@@ -49,7 +49,9 @@
 #include "conf.hpp"
 #include "dictmngr.hpp"
 #include "libwrapper.hpp"
+#include "prefsdlg.hpp"
 #include "transwin.hpp"
+#include "tts.hpp"
 #include "mstardict.hpp"
 
 MStarDict *pMStarDict;
@@ -77,15 +79,21 @@ MStarDict::MStarDict()
     /* initialize stardict plugins */
     std::list < std::string > plugin_order_list;
     std::list < std::string > plugin_disable_list;
-    oStarDictPlugins = new StarDictPlugins("/usr/lib/mstardict/plugins",
-					   plugin_order_list,
-					   plugin_disable_list);
+    oPlugins = new StarDictPlugins("/usr/lib/mstardict/plugins",
+				   plugin_order_list,
+				   plugin_disable_list);
 
     /* initialize dict manager */
     oDict = new DictMngr(this);
 
+    /* initialize prefs dialog */
+    oPrefs = new PrefsDlg(this);
+
     /* initialize translation window */
     oTransWin = new TransWin(this);
+
+    /* initialize tts */
+    oTts = new Tts(this);
 
     /* initialize stardict library */
     oLibs = new Library(this);
@@ -99,14 +107,20 @@ MStarDict::~MStarDict()
     /* deinitialize stardict library */
     delete oLibs;
 
+    /* deinitialize tts */
+    delete oTts;
+
     /* deinitialize translation window */
     delete oTransWin;
+
+    /* deinitialize prefs dialog */
+    delete oPrefs;
 
     /* deinitialize dict manager */
     delete oDict;
 
     /* deinitialize stardict plugins */
-    delete oStarDictPlugins;
+    delete oPlugins;
 
     /* deinitialize configuration */
     delete oConf;
@@ -232,6 +246,14 @@ MStarDict::onDictionariesMenuItemClicked(GtkButton *button,
     /* trigger re-search */
     mStarDict->onSearchEntryChanged(GTK_EDITABLE(mStarDict->search_entry), mStarDict);
     mStarDict->GrabFocus();
+    return true;
+}
+
+gboolean
+MStarDict::onPreferenciesMenuItemClicked(GtkButton *button,
+					 MStarDict *mStarDict)
+{
+    mStarDict->oPrefs->CreatePrefsDialog();
     return true;
 }
 
@@ -376,6 +398,12 @@ MStarDict::CreateMainWindow()
 }
 
 GtkWidget *
+MStarDict::GetMainWindow()
+{
+    return window;
+}
+
+GtkWidget *
 MStarDict::CreateSearchBar()
 {
     GtkWidget *hbox, *entry, *button;
@@ -423,6 +451,12 @@ MStarDict::CreateMainMenu()
     gtk_button_set_label(GTK_BUTTON(item), _("Dictionaries"));
     hildon_app_menu_append(menu, GTK_BUTTON(item));
     g_signal_connect(item, "clicked", G_CALLBACK(onDictionariesMenuItemClicked), this);
+
+    /* preferencies menu item */
+    item = hildon_gtk_button_new(HILDON_SIZE_AUTO);
+    gtk_button_set_label(GTK_BUTTON(item), _("Preferencies"));
+    hildon_app_menu_append(menu, GTK_BUTTON(item));
+    g_signal_connect(item, "clicked", G_CALLBACK(onPreferenciesMenuItemClicked), this);
 
     /* quit menu item */
     item = hildon_gtk_button_new(HILDON_SIZE_AUTO);

@@ -1,3 +1,9 @@
+mstardict (0.5-1) unstable; urgency=low
+
+  * Added espeak support.
+
+ -- Roman Moravcik <roman.moravcik@gmail.com>  Mon, 15 Feb 2010 16:09:47 +0100
+
 mstardict (0.4-4) unstable; urgency=low
 
   * Result window was showing "No search reasult" after Enter

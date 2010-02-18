@@ -28,6 +28,18 @@ class Conf {
     Conf();
     ~Conf();
 
+    bool GetBool(const gchar *key,
+		 bool *val);
+    bool SetBool(const gchar *key,
+		 bool val);
+    bool GetInt(const gchar *key,
+		int *val);
+    bool SetInt(const gchar *key,
+		int val);
+    bool GetString(const gchar *key,
+		   gchar **val);
+    bool SetString(const gchar *key,
+		   const gchar *val);
     bool GetStringList(const gchar *key,
 		       std::list < std::string > &list);
     bool SetStringList(const gchar *key,
