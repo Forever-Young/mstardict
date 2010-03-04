@@ -1,3 +1,14 @@
+mstardict (0.5-2) unstable; urgency=low
+
+  * Added "Download dictionaries" menu item.
+  * Automatically create MyDocs/mstardict directory if doesn't exist.
+  * Directory ~/.stardict/dic added to the list of watched directories
+    for backward compatibility with stardict.
+  * Added Homepage, Vcs-Browser, Vcs-Git, XSBC-Bugtracker fields
+    to debian/control file.
+
+ -- Roman Moravcik <roman.moravcik@gmail.com>  Mon,  4 Mar 2010 18:55:27 +0100
+
 mstardict (0.5-1) unstable; urgency=low
 
   * Added espeak support.
