@@ -31,6 +31,7 @@
 
 #include <glib.h>
 #include <glib/gi18n.h>
+#include <glib/gstdio.h>
 
 #include <gtk/gtk.h>
 #include <hildon/hildon.h>
@@ -39,6 +40,9 @@
 #include "libwrapper.hpp"
 #include "mstardict.hpp"
 #include "dictmngr.hpp"
+
+#define DEFAULT_DICT_DIR "/home/user/MyDocs/mstardict"
+#define STARDICT_DICT_DIR "/home/user/.stardict/dic"
 
 enum {
     BOOKNAME_DICT_INFO_COLUMN,
@@ -59,6 +63,12 @@ class GetAllDictList {
 DictMngr::DictMngr(MStarDict *mStarDict)
 {
     oStarDict = mStarDict;
+
+    /* check if default dictionary exists */
+    if (!g_file_test(DEFAULT_DICT_DIR, GFileTest(G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR))) {
+	    if (g_mkdir(DEFAULT_DICT_DIR, S_IRWXU)==-1)
+		g_warning("Cannot create directory %s.", DEFAULT_DICT_DIR);
+    }
 }
 
 DictMngr::~DictMngr()
@@ -186,8 +196,11 @@ DictMngr::GetAllDictionaryList(std::list < std::string > &dict_list)
     strlist_t order_list;
     strlist_t disable_list;
 
-    /* dictionary directory */
-    dicts_dir_list.push_back(std::string("/home/user/MyDocs/mstardict"));
+    /* default mstardict dictionary directory */
+    dicts_dir_list.push_back(std::string(DEFAULT_DICT_DIR));
+
+    /* stardict dictionary directory */
+    dicts_dir_list.push_back(std::string(STARDICT_DICT_DIR));
     for_each_file(dicts_dir_list, ".ifo", order_list, disable_list, GetAllDictList(dict_list));
 }
 
