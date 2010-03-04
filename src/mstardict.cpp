@@ -250,7 +250,7 @@ MStarDict::onDictionariesMenuItemClicked(GtkButton *button,
 }
 
 gboolean
-MStarDict::onPreferenciesMenuItemClicked(GtkButton *button,
+MStarDict::onPreferencesMenuItemClicked(GtkButton *button,
 					 MStarDict *mStarDict)
 {
     mStarDict->oPrefs->CreatePrefsDialog();
@@ -452,11 +452,11 @@ MStarDict::CreateMainMenu()
     hildon_app_menu_append(menu, GTK_BUTTON(item));
     g_signal_connect(item, "clicked", G_CALLBACK(onDictionariesMenuItemClicked), this);
 
-    /* preferencies menu item */
+    /* preferences menu item */
     item = hildon_gtk_button_new(HILDON_SIZE_AUTO);
-    gtk_button_set_label(GTK_BUTTON(item), _("Preferencies"));
+    gtk_button_set_label(GTK_BUTTON(item), _("Preferences"));
     hildon_app_menu_append(menu, GTK_BUTTON(item));
-    g_signal_connect(item, "clicked", G_CALLBACK(onPreferenciesMenuItemClicked), this);
+    g_signal_connect(item, "clicked", G_CALLBACK(onPreferencesMenuItemClicked), this);
 
     /* quit menu item */
     item = hildon_gtk_button_new(HILDON_SIZE_AUTO);

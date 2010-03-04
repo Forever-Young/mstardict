@@ -63,7 +63,7 @@ PrefsDlg::CreatePrefsDialog()
     dialog = gtk_dialog_new();
     gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);
     gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(oStarDict->GetMainWindow()));
-    gtk_window_set_title(GTK_WINDOW(dialog), _("Preferencies"));
+    gtk_window_set_title(GTK_WINDOW(dialog), _("Preferences"));
     gtk_dialog_add_button(GTK_DIALOG(dialog), _HL("wdgt_bd_save"), GTK_RESPONSE_ACCEPT);
 
     /* main vbox */

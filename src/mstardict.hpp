@@ -57,8 +57,8 @@ class MStarDict {
 					 MStarDict *mStarDict);
     static gboolean onDictionariesMenuItemClicked(GtkButton *button,
 						  MStarDict *mStarDict);
-    static gboolean onPreferenciesMenuItemClicked(GtkButton *button,
-						  MStarDict *mStarDict);
+    static gboolean onPreferencesMenuItemClicked(GtkButton *button,
+						 MStarDict *mStarDict);
     static gboolean onQuitMenuItemClicked(GtkButton *button,
 					  MStarDict *mStarDict);
     static gboolean onLookupProgressDialogResponse(GtkDialog *dialog,

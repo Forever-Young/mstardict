@@ -69,7 +69,7 @@ msgid "No search result"
 msgstr "Žiadne výsledky hľadania"
 
 #: ../src/mstardict.cpp:457 ../src/prefsdlg.cpp:66
-msgid "Preferencies"
+msgid "Preferences"
 msgstr "Predvoľby"
 
 #: ../src/mstardict.cpp:463
