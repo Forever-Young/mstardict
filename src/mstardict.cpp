@@ -40,6 +40,8 @@
 #include <gtk/gtk.h>
 #include <hildon/hildon.h>
 
+#include <libosso.h>
+
 #include <getopt.h>
 #include <string>
 #include <vector>
@@ -68,6 +70,8 @@ MStarDict::MStarDict()
     results_widget = NULL;
     results_view = NULL;
     results_view_scroll = NULL;
+
+    osso_context = osso_initialize("org.maemo.mstardict", VERSION, TRUE, NULL);
 
     /* create list of ressults */
     results_list = gtk_list_store_new(N_COLUMNS,
@@ -124,6 +128,9 @@ MStarDict::~MStarDict()
 
     /* deinitialize configuration */
     delete oConf;
+
+    /* deinitialize osso context */
+    osso_deinitialize(osso_context);
 }
 
 gboolean
@@ -246,6 +253,21 @@ MStarDict::onDictionariesMenuItemClicked(GtkButton *button,
     /* trigger re-search */
     mStarDict->onSearchEntryChanged(GTK_EDITABLE(mStarDict->search_entry), mStarDict);
     mStarDict->GrabFocus();
+    return true;
+}
+
+gboolean
+MStarDict::onDownloadDictionariesMenuItemClicked(GtkButton *button,
+						 MStarDict *mStarDict)
+{
+    osso_rpc_run(mStarDict->osso_context,
+		 "com.nokia.osso_browser",
+		 "/com/nokia/osso_browser",
+		 "com.nokia.osso_browser",
+		 "open_new_window",
+		 NULL,
+		 DBUS_TYPE_STRING, "http://stardict.sourceforge.net/Dictionaries.php",
+		 DBUS_TYPE_INVALID);
     return true;
 }
 
@@ -451,6 +473,12 @@ MStarDict::CreateMainMenu()
     gtk_button_set_label(GTK_BUTTON(item), _("Dictionaries"));
     hildon_app_menu_append(menu, GTK_BUTTON(item));
     g_signal_connect(item, "clicked", G_CALLBACK(onDictionariesMenuItemClicked), this);
+
+    /* download dictionaries menu item */
+    item = hildon_gtk_button_new(HILDON_SIZE_AUTO);
+    gtk_button_set_label(GTK_BUTTON(item), _("Download dictionaries"));
+    hildon_app_menu_append(menu, GTK_BUTTON(item));
+    g_signal_connect(item, "clicked", G_CALLBACK(onDownloadDictionariesMenuItemClicked), this);
 
     /* preferences menu item */
     item = hildon_gtk_button_new(HILDON_SIZE_AUTO);

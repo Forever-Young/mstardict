@@ -25,6 +25,7 @@
 
 #include <gtk/gtk.h>
 #include <hildon/hildon.h>
+#include <libosso.h>
 
 #include "lib/pluginmanager.h"
 
@@ -40,6 +41,8 @@ class Tts;
 
 class MStarDict {
   private:
+    osso_context_t *osso_context;
+
     GtkWidget *window;
     GtkWidget *label_widget;
     GtkWidget *results_widget;
@@ -57,6 +60,8 @@ class MStarDict {
 					 MStarDict *mStarDict);
     static gboolean onDictionariesMenuItemClicked(GtkButton *button,
 						  MStarDict *mStarDict);
+    static gboolean onDownloadDictionariesMenuItemClicked(GtkButton *button,
+							  MStarDict *mStarDict);
     static gboolean onPreferencesMenuItemClicked(GtkButton *button,
 						 MStarDict *mStarDict);
     static gboolean onQuitMenuItemClicked(GtkButton *button,

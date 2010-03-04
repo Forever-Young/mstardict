@@ -7,15 +7,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mstardict\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-15 11:23+0100\n"
-"PO-Revision-Date: 2010-02-15 13:26+0100\n"
+"POT-Creation-Date: 2010-03-04 18:23+0100\n"
+"PO-Revision-Date: 2010-03-04 18:24+0100\n"
 "Last-Translator: Roman Moravčík <roman.moravcik@gmail.com>\n"
 "Language-Team: Slovak <sk-i18n@lists.linux.sk>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../src/dictmngr.cpp:88 ../src/mstardict.cpp:451
+#: ../src/dictmngr.cpp:98 ../src/mstardict.cpp:459
 msgid "Dictionaries"
 msgstr "Slovníky"
 
@@ -51,32 +51,36 @@ msgstr "<span foreground=\\\"red\\\">[Chýbajúci obrázok]</span>"
 msgid "Unknown data type"
 msgstr "Neznámy dátový typ"
 
-#: ../src/mstardict.cpp:297
+#: ../src/mstardict.cpp:305
 msgid "Searching"
 msgstr "Hľadám"
 
-#: ../src/mstardict.cpp:299
+#: ../src/mstardict.cpp:307
 msgid "Cancel"
 msgstr "Zrušiť"
 
-#: ../src/mstardict.cpp:333
+#: ../src/mstardict.cpp:341
 msgid "MStardict"
 msgstr "Slovník"
 
 #. no_search_result label
-#: ../src/mstardict.cpp:350 ../src/mstardict.cpp:540
+#: ../src/mstardict.cpp:358 ../src/mstardict.cpp:554
 msgid "No search result"
 msgstr "Žiadne výsledky hľadania"
 
-#: ../src/mstardict.cpp:457 ../src/prefsdlg.cpp:66
+#: ../src/mstardict.cpp:465
+msgid "Download dictionaries"
+msgstr "Stiahnuť slovníky"
+
+#: ../src/mstardict.cpp:471 ../src/prefsdlg.cpp:66
 msgid "Preferences"
 msgstr "Predvoľby"
 
-#: ../src/mstardict.cpp:463
+#: ../src/mstardict.cpp:477
 msgid "Quit"
 msgstr "Zavrieť"
 
-#: ../src/mstardict.cpp:553
+#: ../src/mstardict.cpp:567
 msgid "No loaded dictionary"
 msgstr "Žiadne načítané slovníky"
 
@@ -293,7 +297,7 @@ msgid "Vietnam"
 msgstr ""
 
 #: ../src/tts.cpp:111
-msgid "Mandarin"
+msgid "Chinese (Mandarin)"
 msgstr ""
 
 #: ../src/tts.cpp:112
