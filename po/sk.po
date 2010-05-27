@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: mstardict\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-03-04 18:23+0100\n"
-"PO-Revision-Date: 2010-03-04 18:24+0100\n"
+"PO-Revision-Date: 2010-05-27 14:35+0200\n"
 "Last-Translator: Roman Moravčík <roman.moravcik@gmail.com>\n"
 "Language-Team: Slovak <sk-i18n@lists.linux.sk>\n"
 "MIME-Version: 1.0\n"
@@ -94,219 +94,219 @@ msgstr "Vysloviť"
 
 #: ../src/tts.cpp:60
 msgid "Afrikaans"
-msgstr ""
+msgstr "Africký"
 
 #: ../src/tts.cpp:61
 msgid "Bosnian"
-msgstr ""
+msgstr "Bosniansky"
 
 #: ../src/tts.cpp:62
 msgid "Catalan"
-msgstr ""
+msgstr "Katalánsky"
 
 #: ../src/tts.cpp:63
 msgid "Czech"
-msgstr ""
+msgstr "Český"
 
 #: ../src/tts.cpp:64
 msgid "Welsh"
-msgstr ""
+msgstr "Waleský"
 
 #: ../src/tts.cpp:65
 msgid "Danish"
-msgstr ""
+msgstr "Dánsky"
 
 #: ../src/tts.cpp:66
 msgid "German"
-msgstr ""
+msgstr "Nemecký"
 
 #: ../src/tts.cpp:67
 msgid "Greek"
-msgstr ""
+msgstr "Grécky"
 
 #: ../src/tts.cpp:68
 msgid "English (Scottish)"
-msgstr ""
+msgstr "Anglický (Škótsky)"
 
 #: ../src/tts.cpp:69
 msgid "English"
-msgstr ""
+msgstr "Anglický"
 
 #: ../src/tts.cpp:70
 msgid "English (Lancashire)"
-msgstr ""
+msgstr "Anglický (Lancashire)"
 
 #: ../src/tts.cpp:71
 msgid "English (Received Pronunciation)"
-msgstr ""
+msgstr "Anglický (Received Pronunciation)"
 
 #: ../src/tts.cpp:72
 msgid "English (West Midlands)"
-msgstr ""
+msgstr "Anglický (West Midlands)"
 
 #: ../src/tts.cpp:73
 msgid "English (American)"
-msgstr ""
+msgstr "Anglický (Americký)"
 
 #: ../src/tts.cpp:74
 msgid "English (Westindies)"
-msgstr ""
+msgstr "Anglický (Westindies)"
 
 #: ../src/tts.cpp:75
 msgid "Esperanto"
-msgstr ""
+msgstr "Esperanto"
 
 #: ../src/tts.cpp:76
 msgid "Spanish"
-msgstr ""
+msgstr "Španielsky"
 
 #: ../src/tts.cpp:77
 msgid "Spanish (Latin American)"
-msgstr ""
+msgstr "Španielsky (Latinsko-americký)"
 
 #: ../src/tts.cpp:78
 msgid "Finnish"
-msgstr ""
+msgstr "Fínsky"
 
 #: ../src/tts.cpp:79
 msgid "French"
-msgstr ""
+msgstr "Francúzsky"
 
 #: ../src/tts.cpp:80
 msgid "French (Belgium)"
-msgstr ""
+msgstr "Francúzsky (Belgický)"
 
 #: ../src/tts.cpp:81
 msgid "Greek (Ancient)"
-msgstr ""
+msgstr "Grécky (Antický)"
 
 #: ../src/tts.cpp:82
 msgid "Hindi"
-msgstr ""
+msgstr "Hindský"
 
 #: ../src/tts.cpp:83
 msgid "Croatian"
-msgstr ""
+msgstr "Chorvátsky"
 
 #: ../src/tts.cpp:84
 msgid "Hungarian"
-msgstr ""
+msgstr "Maďarský"
 
 #: ../src/tts.cpp:85
 msgid "Armenian"
-msgstr ""
+msgstr "Arménsky"
 
 #: ../src/tts.cpp:86
 msgid "Armenian (West)"
-msgstr ""
+msgstr "Arménsky (Západný)"
 
 #: ../src/tts.cpp:87
 msgid "Indonesian"
-msgstr ""
+msgstr "Indonézsky"
 
 #: ../src/tts.cpp:88
 msgid "Icelandic"
-msgstr ""
+msgstr "Islandský"
 
 #: ../src/tts.cpp:89
 msgid "Italian"
-msgstr ""
+msgstr "Taliansky"
 
 #: ../src/tts.cpp:90
 msgid "Lojban"
-msgstr ""
+msgstr "Lojban"
 
 #: ../src/tts.cpp:91
 msgid "Kurdish"
-msgstr ""
+msgstr "Kurdský"
 
 #: ../src/tts.cpp:92
 msgid "Latin"
-msgstr ""
+msgstr "Latinský"
 
 #: ../src/tts.cpp:93
 msgid "Latvian"
-msgstr ""
+msgstr "Lotyšský"
 
 #: ../src/tts.cpp:94
 msgid "Macedonian"
-msgstr ""
+msgstr "Macedónsky"
 
 #: ../src/tts.cpp:95
 msgid "Dutch"
-msgstr ""
+msgstr "Holandský"
 
 #: ../src/tts.cpp:96
 msgid "Norwegian"
-msgstr ""
+msgstr "Nórsky"
 
 #: ../src/tts.cpp:97
 msgid "Papiamento"
-msgstr ""
+msgstr "Papiamento"
 
 #: ../src/tts.cpp:98
 msgid "Polish"
-msgstr ""
+msgstr "Poľský"
 
 #: ../src/tts.cpp:99
 msgid "Brazil"
-msgstr ""
+msgstr "Brazílsky"
 
 #: ../src/tts.cpp:100
 msgid "Portugal"
-msgstr ""
+msgstr "Portugalsky"
 
 #: ../src/tts.cpp:101
 msgid "Romanian"
-msgstr ""
+msgstr "Rumunsky"
 
 #: ../src/tts.cpp:102
 msgid "Russian"
-msgstr ""
+msgstr "Ruský"
 
 #: ../src/tts.cpp:103
 msgid "Slovak"
-msgstr ""
+msgstr "Slovenský"
 
 #: ../src/tts.cpp:104
 msgid "Albanian"
-msgstr ""
+msgstr "Albánsky"
 
 #: ../src/tts.cpp:105
 msgid "Serbian"
-msgstr ""
+msgstr "Srbský"
 
 #: ../src/tts.cpp:106
 msgid "Swedish"
-msgstr ""
+msgstr "Švédsky"
 
 #: ../src/tts.cpp:107
 msgid "Swahihi"
-msgstr ""
+msgstr "Swahihi"
 
 #: ../src/tts.cpp:108
 msgid "Tamil"
-msgstr ""
+msgstr "Tamil"
 
 #: ../src/tts.cpp:109
 msgid "Turkish"
-msgstr ""
+msgstr "Turecký"
 
 #: ../src/tts.cpp:110
 msgid "Vietnam"
-msgstr ""
+msgstr "Vietnamský"
 
 #: ../src/tts.cpp:111
 msgid "Chinese (Mandarin)"
-msgstr ""
+msgstr "Čínsky (Mandarínsky)"
 
 #: ../src/tts.cpp:112
 msgid "Chinese (Cantonese)"
-msgstr ""
+msgstr "Čínsky (Kantónsky)"
 
 #: ../src/tts.cpp:113
 msgid "Default"
-msgstr ""
+msgstr "Predvolený"
 
 #: ../src/tts.cpp:263
 msgid "Text-To-Speech"
