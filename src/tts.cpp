@@ -202,7 +202,7 @@ Tts::GetVoicesList()
 
 	for (int j = 0; voices[j].name != NULL; j++) {
 	    if (!strcmp(espeak_voices[i]->name, voices[j].name)) {
-		disp_name = g_strdup(voices[j].disp_name);
+		disp_name = g_strdup(_(voices[j].disp_name));
 		break;
 	    }
 	}
