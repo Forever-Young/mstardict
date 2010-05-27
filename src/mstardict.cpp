@@ -266,7 +266,7 @@ MStarDict::onDownloadDictionariesMenuItemClicked(GtkButton *button,
 		 "com.nokia.osso_browser",
 		 "open_new_window",
 		 NULL,
-		 DBUS_TYPE_STRING, "http://stardict.sourceforge.net/Dictionaries.php",
+		 DBUS_TYPE_STRING, "http://xdxf.revdanica.com/down2/index.php?down_format=StarDict",
 		 DBUS_TYPE_INVALID);
     return true;
 }
