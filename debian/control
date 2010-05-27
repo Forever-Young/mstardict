@@ -10,7 +10,7 @@ Vcs-Git: https://vcs.maemo.org/git/mstardict
 
 Package: mstardict
 Architecture: any
-Depends: ${shlibs:Depends}, ttf-freefont
+Depends: ${shlibs:Depends}
 Description: International dictionary for Maemo
  MStarDict is a StarDict clone written with using Gtk2 for Maemo.
  It can use StarDict DICT files as a word database for translation.
