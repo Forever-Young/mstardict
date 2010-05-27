@@ -1,7 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.52)
 
-AC_INIT(mstardict, 0.5, roman.moravcik@gmail.com)
+AC_INIT(mstardict, 0.6, roman.moravcik@gmail.com)
 AC_CONFIG_SRCDIR(src/mstardict.cpp)
 
 dnl Don't include maintainer make-rules by default

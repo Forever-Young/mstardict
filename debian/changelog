@@ -1,3 +1,12 @@
+mstardict (0.6-1) unstable; urgency=low
+
+  * Removed dependency to ttf-freefont.
+  * Fixed "Download dictionaries" URL.
+  * Added Finnish translation by Marko Vertainen.
+  * Updated Slovak translation.
+
+ -- Roman Moravcik <roman.moravcik@gmail.com>  Thu, 27 May 2010 14:36:51 +0200
+
 mstardict (0.5-2) unstable; urgency=low
 
   * Added "Download dictionaries" menu item.
