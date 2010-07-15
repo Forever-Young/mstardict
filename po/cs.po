@@ -1,330 +1,332 @@
-# SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 # Roman Moravčík <roman.moravcik@gmail.com>, 2010.
-#, fuzzy
+# Pavel Fric, 2010.
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: mstardict\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-15 12:48+0000\n"
-"PO-Revision-Date: 2010-07-15 14:51+0200\n"
-"Last-Translator: Roman Moravčík <roman.moravcik@gmail.com>\n"
-"Language-Team: cs_CZ <>\n"
+"POT-Creation-Date: 2010-06-02 04:54+0000\n"
+"PO-Revision-Date: 2010-06-14 20:52+0200\n"
+"Last-Translator: Pavel Fric\n"
+"Language-Team: Czech <kde-i18n-doc@kde.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Lokalize 1.0\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 
 #: ../src/dictmngr.cpp:98 ../src/mstardict.cpp:473
 msgid "Dictionaries"
-msgstr ""
+msgstr "Slovníky"
 
 #: ../src/libwrapper.cpp:126
 msgid "XDXF data parsing plug-in is not found!"
-msgstr ""
+msgstr "Přídavný modul pro zpracovávaní dat XDXF nebyl nalezen!"
 
 #: ../src/libwrapper.cpp:131
 msgid "PowerWord data parsing plug-in is not found!"
-msgstr ""
+msgstr "Přídavný modul pro zpracovávaní dat PowerWord nebyl nalezen!"
 
 #: ../src/libwrapper.cpp:136
 msgid "Wiki data parsing plug-in is not found!"
-msgstr ""
+msgstr "Přídavný modul pro zpracovávaní dat Wiki nebyl nalezen!"
 
 #: ../src/libwrapper.cpp:141
 msgid "HTML data parsing plug-in is not found!"
-msgstr ""
+msgstr "Přídavný modul pro zpracovávaní dat HTML nebyl nalezen!"
 
 #: ../src/libwrapper.cpp:146
 msgid "WordNet data parsing plug-in is not found!"
-msgstr ""
+msgstr "Přídavný modul pro zpracovávaní dat WordNet nebyl nalezen!"
 
 #: ../src/libwrapper.cpp:192
 msgid "<span foreground=\"red\">[Load image error!]</span>"
 msgstr ""
+"<span foreground=\\\"red\\\">[Chyba při nahrávání obrázku!]</span>"
 
 #: ../src/libwrapper.cpp:196
 msgid "<span foreground=\"red\">[Missing Image]</span>"
-msgstr ""
+msgstr "<span foreground=\\\"red\\\">[Chybí obrázek]</span>"
 
 #: ../src/libwrapper.cpp:210
 msgid "Unknown data type"
-msgstr ""
+msgstr "Neznámý datový typ"
 
 #: ../src/mstardict.cpp:319
 msgid "Searching"
-msgstr ""
+msgstr "Hledá se"
 
 #: ../src/mstardict.cpp:321
 msgid "Cancel"
-msgstr ""
+msgstr "Zrušit"
 
 #: ../src/mstardict.cpp:355
 msgid "MStardict"
-msgstr "MStardict"
+msgstr "Slovník"
 
 #. no_search_result label
 #: ../src/mstardict.cpp:372 ../src/mstardict.cpp:568
 msgid "No search result"
-msgstr ""
+msgstr "Žádné výsledky hledání"
 
 #: ../src/mstardict.cpp:479
 msgid "Download dictionaries"
-msgstr ""
+msgstr "Stáhnout slovníky"
 
 #: ../src/mstardict.cpp:485 ../src/prefsdlg.cpp:66
 msgid "Preferences"
-msgstr ""
+msgstr "Nastavení"
 
 #: ../src/mstardict.cpp:491
 msgid "Quit"
-msgstr ""
+msgstr "Ukončit"
 
 #: ../src/mstardict.cpp:581
 msgid "No loaded dictionary"
-msgstr ""
+msgstr "Žádný nahraný slovník"
 
 #: ../src/transwin.cpp:123
 msgid "Translation"
-msgstr ""
+msgstr "Překlad"
 
 #: ../src/transwin.cpp:167
 msgid "Say"
-msgstr ""
+msgstr "Vyslovit"
 
 #: ../src/tts.cpp:60
 msgid "Afrikaans"
-msgstr ""
+msgstr "Afrikánský"
 
 #: ../src/tts.cpp:61
 msgid "Bosnian"
-msgstr ""
+msgstr "Bosenský"
 
 #: ../src/tts.cpp:62
 msgid "Catalan"
-msgstr ""
+msgstr "Katalánský"
 
 #: ../src/tts.cpp:63
 msgid "Czech"
-msgstr ""
+msgstr "Český"
 
 #: ../src/tts.cpp:64
 msgid "Welsh"
-msgstr ""
+msgstr "Welšský"
 
 #: ../src/tts.cpp:65
 msgid "Danish"
-msgstr ""
+msgstr "Dánský"
 
 #: ../src/tts.cpp:66
 msgid "German"
-msgstr ""
+msgstr "Německý"
 
 #: ../src/tts.cpp:67
 msgid "Greek"
-msgstr ""
+msgstr "Řecký"
 
 #: ../src/tts.cpp:68
 msgid "English (Scottish)"
-msgstr ""
+msgstr "Anglický (Skótský)"
 
 #: ../src/tts.cpp:69
 msgid "English"
-msgstr ""
+msgstr "Anglický"
 
 #: ../src/tts.cpp:70
 msgid "English (Lancashire)"
-msgstr ""
+msgstr "Anglický (Lancashire)"
 
 #: ../src/tts.cpp:71
 msgid "English (Received Pronunciation)"
-msgstr ""
+msgstr "Anglický (běžná výslovnost)"
 
 #: ../src/tts.cpp:72
 msgid "English (West Midlands)"
-msgstr ""
+msgstr "Anglický (West Midland - střední Anglie)"
 
 #: ../src/tts.cpp:73
 msgid "English (American)"
-msgstr ""
+msgstr "Anglický (Americký)"
 
 #: ../src/tts.cpp:74
 msgid "English (Westindies)"
-msgstr ""
+msgstr "Anglický (Karibská oblast)"
 
 #: ../src/tts.cpp:75
 msgid "Esperanto"
-msgstr ""
+msgstr "Esperanto"
 
 #: ../src/tts.cpp:76
 msgid "Spanish"
-msgstr ""
+msgstr "Španělský"
 
 #: ../src/tts.cpp:77
 msgid "Spanish (Latin American)"
-msgstr ""
+msgstr "Španělský (latinskoamerický)"
 
 #: ../src/tts.cpp:78
 msgid "Finnish"
-msgstr ""
+msgstr "Finský"
 
 #: ../src/tts.cpp:79
 msgid "French"
-msgstr ""
+msgstr "Francouzský"
 
 #: ../src/tts.cpp:80
 msgid "French (Belgium)"
-msgstr ""
+msgstr "Francouzský (Belgie)"
 
 #: ../src/tts.cpp:81
 msgid "Greek (Ancient)"
-msgstr ""
+msgstr "Řecký (starověký)"
 
 #: ../src/tts.cpp:82
 msgid "Hindi"
-msgstr ""
+msgstr "Hindský"
 
 #: ../src/tts.cpp:83
 msgid "Croatian"
-msgstr ""
+msgstr "Chorvatský"
 
 #: ../src/tts.cpp:84
 msgid "Hungarian"
-msgstr ""
+msgstr "Maďarský"
 
 #: ../src/tts.cpp:85
 msgid "Armenian"
-msgstr ""
+msgstr "Arménský"
 
 #: ../src/tts.cpp:86
 msgid "Armenian (West)"
-msgstr ""
+msgstr "Arménský (západní)"
 
 #: ../src/tts.cpp:87
 msgid "Indonesian"
-msgstr ""
+msgstr "Indonézský"
 
 #: ../src/tts.cpp:88
 msgid "Icelandic"
-msgstr ""
+msgstr "Islandský"
 
 #: ../src/tts.cpp:89
 msgid "Italian"
-msgstr ""
+msgstr "Italský"
 
 #: ../src/tts.cpp:90
 msgid "Lojban"
-msgstr ""
+msgstr "Lojban"
 
 #: ../src/tts.cpp:91
 msgid "Kurdish"
-msgstr ""
+msgstr "Kurdský"
 
 #: ../src/tts.cpp:92
 msgid "Latin"
-msgstr ""
+msgstr "Latinský"
 
 #: ../src/tts.cpp:93
 msgid "Latvian"
-msgstr ""
+msgstr "Lotyšský"
 
 #: ../src/tts.cpp:94
 msgid "Macedonian"
-msgstr ""
+msgstr "Makedónský"
 
 #: ../src/tts.cpp:95
 msgid "Dutch"
-msgstr ""
+msgstr "Holandský"
 
 #: ../src/tts.cpp:96
 msgid "Norwegian"
-msgstr ""
+msgstr "Norský"
 
 #: ../src/tts.cpp:97
 msgid "Papiamento"
-msgstr ""
+msgstr "Papiamento"
 
 #: ../src/tts.cpp:98
 msgid "Polish"
-msgstr ""
+msgstr "Polský"
 
 #: ../src/tts.cpp:99
 msgid "Brazil"
-msgstr ""
+msgstr "Brazilský"
 
 #: ../src/tts.cpp:100
 msgid "Portugal"
-msgstr ""
+msgstr "Portugalský"
 
 #: ../src/tts.cpp:101
 msgid "Romanian"
-msgstr ""
+msgstr "Rumunský"
 
 #: ../src/tts.cpp:102
 msgid "Russian"
-msgstr ""
+msgstr "Ruský"
 
 #: ../src/tts.cpp:103
 msgid "Slovak"
-msgstr ""
+msgstr "Slovenský"
 
 #: ../src/tts.cpp:104
 msgid "Albanian"
-msgstr ""
+msgstr "Albánský"
 
 #: ../src/tts.cpp:105
 msgid "Serbian"
-msgstr ""
+msgstr "Srbský"
 
 #: ../src/tts.cpp:106
 msgid "Swedish"
-msgstr ""
+msgstr "Švédský"
 
 #: ../src/tts.cpp:107
 msgid "Swahihi"
-msgstr ""
+msgstr "Swahihi"
 
 #: ../src/tts.cpp:108
 msgid "Tamil"
-msgstr ""
+msgstr "Tamilský"
 
 #: ../src/tts.cpp:109
 msgid "Turkish"
-msgstr ""
+msgstr "Turecký"
 
 #: ../src/tts.cpp:110
 msgid "Vietnam"
-msgstr ""
+msgstr "Větnamský"
 
 #: ../src/tts.cpp:111
 msgid "Chinese (Mandarin)"
-msgstr ""
+msgstr "Čínský (mandarínský)"
 
 #: ../src/tts.cpp:112
 msgid "Chinese (Cantonese)"
-msgstr ""
+msgstr "Čínský (kantonský)"
 
 #: ../src/tts.cpp:113
 msgid "Default"
-msgstr ""
+msgstr "Výchozí"
 
 #: ../src/tts.cpp:263
 msgid "Text-To-Speech"
-msgstr ""
+msgstr "Výslovnost"
 
 #: ../src/tts.cpp:270
 msgid "Enable"
-msgstr ""
+msgstr "Povolit"
 
 #: ../src/tts.cpp:278
 msgid "Male"
-msgstr ""
+msgstr "Muž"
 
 #: ../src/tts.cpp:282
 msgid "Female"
-msgstr ""
+msgstr "Žena"
 
 #: ../src/tts.cpp:288
 msgid "Language"
-msgstr ""
+msgstr "Jazyk"
+
