@@ -1,3 +1,9 @@
+mstardict (0.6-4) unstable; urgency=low
+
+  * Fixed installation of Czech translation.
+
+ -- Roman Moravcik <roman.moravcik@gmail.com>  Fri,  8 Oct 2010 14:05:46 +0200
+
 mstardict (0.6-3) unstable; urgency=low
 
   * Added Russian translation by Alexey Gavrilov.
