@@ -1,0 +1,333 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-10-24 06:14+0000\n"
+"PO-Revision-Date: 2010-10-24 15:35+0100\n"
+"Last-Translator: el_libre - - www.catmidia.cat <el.libre@gmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../src/dictmngr.cpp:98
+#: ../src/mstardict.cpp:473
+msgid "Dictionaries"
+msgstr "Diccionaris"
+
+#: ../src/libwrapper.cpp:126
+msgid "XDXF data parsing plug-in is not found!"
+msgstr ""
+
+#: ../src/libwrapper.cpp:131
+msgid "PowerWord data parsing plug-in is not found!"
+msgstr ""
+
+#: ../src/libwrapper.cpp:136
+msgid "Wiki data parsing plug-in is not found!"
+msgstr ""
+
+#: ../src/libwrapper.cpp:141
+msgid "HTML data parsing plug-in is not found!"
+msgstr ""
+
+#: ../src/libwrapper.cpp:146
+msgid "WordNet data parsing plug-in is not found!"
+msgstr ""
+
+#: ../src/libwrapper.cpp:192
+msgid "<span foreground=\"red\">[Load image error!]</span>"
+msgstr ""
+
+#: ../src/libwrapper.cpp:196
+msgid "<span foreground=\"red\">[Missing Image]</span>"
+msgstr ""
+
+#: ../src/libwrapper.cpp:210
+msgid "Unknown data type"
+msgstr ""
+
+#: ../src/mstardict.cpp:319
+msgid "Searching"
+msgstr "Cerca"
+
+#: ../src/mstardict.cpp:321
+msgid "Cancel"
+msgstr "Cancel·la"
+
+#: ../src/mstardict.cpp:355
+msgid "MStardict"
+msgstr ""
+
+#. no_search_result label
+#: ../src/mstardict.cpp:372
+#: ../src/mstardict.cpp:568
+msgid "No search result"
+msgstr ""
+
+#: ../src/mstardict.cpp:479
+msgid "Download dictionaries"
+msgstr ""
+
+#: ../src/mstardict.cpp:485
+#: ../src/prefsdlg.cpp:66
+msgid "Preferences"
+msgstr "Preferències"
+
+#: ../src/mstardict.cpp:491
+msgid "Quit"
+msgstr "Surt"
+
+#: ../src/mstardict.cpp:581
+msgid "No loaded dictionary"
+msgstr ""
+
+#: ../src/transwin.cpp:123
+msgid "Translation"
+msgstr "Traducció"
+
+#: ../src/transwin.cpp:167
+msgid "Say"
+msgstr ""
+
+#: ../src/tts.cpp:60
+msgid "Afrikaans"
+msgstr "Afrikaans"
+
+#: ../src/tts.cpp:61
+msgid "Bosnian"
+msgstr "Bosnià"
+
+#: ../src/tts.cpp:62
+msgid "Catalan"
+msgstr "Català"
+
+#: ../src/tts.cpp:63
+msgid "Czech"
+msgstr "Txec"
+
+#: ../src/tts.cpp:64
+msgid "Welsh"
+msgstr "Gal·lès"
+
+#: ../src/tts.cpp:65
+msgid "Danish"
+msgstr "Danès"
+
+#: ../src/tts.cpp:66
+msgid "German"
+msgstr "Alemany"
+
+#: ../src/tts.cpp:67
+msgid "Greek"
+msgstr "Grec"
+
+#: ../src/tts.cpp:68
+msgid "English (Scottish)"
+msgstr ""
+
+#: ../src/tts.cpp:69
+msgid "English"
+msgstr "Anglès"
+
+#: ../src/tts.cpp:70
+msgid "English (Lancashire)"
+msgstr ""
+
+#: ../src/tts.cpp:71
+msgid "English (Received Pronunciation)"
+msgstr ""
+
+#: ../src/tts.cpp:72
+msgid "English (West Midlands)"
+msgstr ""
+
+#: ../src/tts.cpp:73
+msgid "English (American)"
+msgstr "Anglès (americà)"
+
+#: ../src/tts.cpp:74
+msgid "English (Westindies)"
+msgstr ""
+
+#: ../src/tts.cpp:75
+msgid "Esperanto"
+msgstr "Esperanto "
+
+#: ../src/tts.cpp:76
+msgid "Spanish"
+msgstr "Espanyol"
+
+#: ../src/tts.cpp:77
+msgid "Spanish (Latin American)"
+msgstr ""
+
+#: ../src/tts.cpp:78
+msgid "Finnish"
+msgstr "Finès"
+
+#: ../src/tts.cpp:79
+msgid "French"
+msgstr "Francès"
+
+#: ../src/tts.cpp:80
+msgid "French (Belgium)"
+msgstr "Francès (Bèlgica)"
+
+#: ../src/tts.cpp:81
+msgid "Greek (Ancient)"
+msgstr ""
+
+#: ../src/tts.cpp:82
+msgid "Hindi"
+msgstr "Hindi"
+
+#: ../src/tts.cpp:83
+msgid "Croatian"
+msgstr "Croat"
+
+#: ../src/tts.cpp:84
+msgid "Hungarian"
+msgstr "Hungarès"
+
+#: ../src/tts.cpp:85
+msgid "Armenian"
+msgstr "Armeni"
+
+#: ../src/tts.cpp:86
+msgid "Armenian (West)"
+msgstr ""
+
+#: ../src/tts.cpp:87
+msgid "Indonesian"
+msgstr "Indonesi"
+
+#: ../src/tts.cpp:88
+msgid "Icelandic"
+msgstr "Islandès"
+
+#: ../src/tts.cpp:89
+msgid "Italian"
+msgstr "Italià"
+
+#: ../src/tts.cpp:90
+msgid "Lojban"
+msgstr ""
+
+#: ../src/tts.cpp:91
+msgid "Kurdish"
+msgstr "Kurd"
+
+#: ../src/tts.cpp:92
+msgid "Latin"
+msgstr "Llatí"
+
+#: ../src/tts.cpp:93
+msgid "Latvian"
+msgstr "Letó"
+
+#: ../src/tts.cpp:94
+msgid "Macedonian"
+msgstr "Macedoni"
+
+#: ../src/tts.cpp:95
+msgid "Dutch"
+msgstr "Holandès"
+
+#: ../src/tts.cpp:96
+msgid "Norwegian"
+msgstr "Noruec"
+
+#: ../src/tts.cpp:97
+msgid "Papiamento"
+msgstr "Papiament"
+
+#: ../src/tts.cpp:98
+msgid "Polish"
+msgstr "Polonès"
+
+#: ../src/tts.cpp:99
+msgid "Brazil"
+msgstr "Brasil"
+
+#: ../src/tts.cpp:100
+msgid "Portugal"
+msgstr "Portugal"
+
+#: ../src/tts.cpp:101
+msgid "Romanian"
+msgstr "Romanès"
+
+#: ../src/tts.cpp:102
+msgid "Russian"
+msgstr "Rus"
+
+#: ../src/tts.cpp:103
+msgid "Slovak"
+msgstr "Eslovac"
+
+#: ../src/tts.cpp:104
+msgid "Albanian"
+msgstr "Albanès"
+
+#: ../src/tts.cpp:105
+msgid "Serbian"
+msgstr "Serbi"
+
+#: ../src/tts.cpp:106
+msgid "Swedish"
+msgstr "Suec"
+
+#: ../src/tts.cpp:107
+msgid "Swahihi"
+msgstr ""
+
+#: ../src/tts.cpp:108
+msgid "Tamil"
+msgstr "Tàmil"
+
+#: ../src/tts.cpp:109
+msgid "Turkish"
+msgstr "Turc"
+
+#: ../src/tts.cpp:110
+msgid "Vietnam"
+msgstr ""
+
+#: ../src/tts.cpp:111
+msgid "Chinese (Mandarin)"
+msgstr ""
+
+#: ../src/tts.cpp:112
+msgid "Chinese (Cantonese)"
+msgstr ""
+
+#: ../src/tts.cpp:113
+msgid "Default"
+msgstr "Predeterminat"
+
+#: ../src/tts.cpp:263
+msgid "Text-To-Speech"
+msgstr "Text per pronunciar"
+
+#: ../src/tts.cpp:270
+msgid "Enable"
+msgstr "Habilita"
+
+#: ../src/tts.cpp:278
+msgid "Male"
+msgstr "Home"
+
+#: ../src/tts.cpp:282
+msgid "Female"
+msgstr "Dona"
+
+#: ../src/tts.cpp:288
+msgid "Language"
+msgstr "Idioma"
+
