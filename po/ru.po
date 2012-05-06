@@ -67,7 +67,7 @@ msgstr "MStardict"
 #. no_search_result label
 #: ../src/mstardict.cpp:372 ../src/mstardict.cpp:568
 msgid "No search result"
-msgstr "No search result"
+msgstr "Ничего не найдено"
 
 #: ../src/mstardict.cpp:479
 msgid "Download dictionaries"
@@ -87,7 +87,7 @@ msgstr "Нет загруженных словарей"
 
 #: ../src/transwin.cpp:123
 msgid "Translation"
-msgstr "Паревод"
+msgstr "Перевод"
 
 #: ../src/transwin.cpp:167
 msgid "Say"
@@ -323,7 +323,7 @@ msgstr "Мужской"
 
 #: ../src/tts.cpp:282
 msgid "Female"
-msgstr "Жанский"
+msgstr "Женский"
 
 #: ../src/tts.cpp:288
 msgid "Language"
