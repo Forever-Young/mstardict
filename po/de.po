@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MStarDict-0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-04 04:11+0000\n"
+"POT-Creation-Date: 2012-07-05 11:53+0400\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Oskar Welzl <dev@welzl.info>\n"
 "Language-Team: \n"
@@ -11,10 +11,30 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Language: German\n"
 
-#: ../src/dictmngr.cpp:88
-#: ../src/mstardict.cpp:451
+#: ../src/dictmngr.cpp:100 ../src/mstardict.cpp:473
 msgid "Dictionaries"
 msgstr "Wörterbücher"
+
+#: ../src/dictmngr.cpp:101 ../src/dictmngr.cpp:225
+msgid "Reorder"
+msgstr ""
+
+#: ../src/dictmngr.cpp:226
+msgid "First"
+msgstr ""
+
+#: ../src/dictmngr.cpp:227
+msgid "Up"
+msgstr ""
+
+#: ../src/dictmngr.cpp:228
+msgid "Down"
+msgstr ""
+
+#: ../src/dictmngr.cpp:229
+#, fuzzy
+msgid "Last"
+msgstr "Latein"
 
 #: ../src/libwrapper.cpp:126
 msgid "XDXF data parsing plug-in is not found!"
@@ -48,34 +68,38 @@ msgstr "<span foreground=\"red\">[Bild fehlt]</span>"
 msgid "Unknown data type"
 msgstr "Unbekannter Datentyp"
 
-#: ../src/mstardict.cpp:297
+#: ../src/mstardict.cpp:319
 msgid "Searching"
 msgstr "Suche"
 
-#: ../src/mstardict.cpp:299
+#: ../src/mstardict.cpp:321
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: ../src/mstardict.cpp:333
+#: ../src/mstardict.cpp:355
 msgid "MStardict"
 msgstr "MStardict"
 
 #. no_search_result label
-#: ../src/mstardict.cpp:350
-#: ../src/mstardict.cpp:540
+#: ../src/mstardict.cpp:372 ../src/mstardict.cpp:568
 msgid "No search result"
 msgstr "Keine Ergebnisse"
 
-#: ../src/mstardict.cpp:457
-#: ../src/prefsdlg.cpp:66
-msgid "Preferencies"
+#: ../src/mstardict.cpp:479
+#, fuzzy
+msgid "Download dictionaries"
+msgstr "Kein Wörterbuch geladen"
+
+#: ../src/mstardict.cpp:485 ../src/prefsdlg.cpp:66
+#, fuzzy
+msgid "Preferences"
 msgstr "Einstellungen"
 
-#: ../src/mstardict.cpp:463
+#: ../src/mstardict.cpp:491
 msgid "Quit"
 msgstr "Beenden"
 
-#: ../src/mstardict.cpp:553
+#: ../src/mstardict.cpp:581
 msgid "No loaded dictionary"
 msgstr "Kein Wörterbuch geladen"
 
@@ -322,4 +346,3 @@ msgstr "Weiblich"
 #: ../src/tts.cpp:288
 msgid "Language"
 msgstr "Sprache"
-

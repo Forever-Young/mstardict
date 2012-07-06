@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mstardict\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-04 18:23+0100\n"
+"POT-Creation-Date: 2012-07-05 11:53+0400\n"
 "PO-Revision-Date: 2010-05-27 14:35+0200\n"
 "Last-Translator: Roman Moravčík <roman.moravcik@gmail.com>\n"
 "Language-Team: Slovak <sk-i18n@lists.linux.sk>\n"
@@ -15,9 +15,30 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../src/dictmngr.cpp:98 ../src/mstardict.cpp:459
+#: ../src/dictmngr.cpp:100 ../src/mstardict.cpp:473
 msgid "Dictionaries"
 msgstr "Slovníky"
+
+#: ../src/dictmngr.cpp:101 ../src/dictmngr.cpp:225
+msgid "Reorder"
+msgstr ""
+
+#: ../src/dictmngr.cpp:226
+msgid "First"
+msgstr ""
+
+#: ../src/dictmngr.cpp:227
+msgid "Up"
+msgstr ""
+
+#: ../src/dictmngr.cpp:228
+msgid "Down"
+msgstr ""
+
+#: ../src/dictmngr.cpp:229
+#, fuzzy
+msgid "Last"
+msgstr "Latinský"
 
 #: ../src/libwrapper.cpp:126
 msgid "XDXF data parsing plug-in is not found!"
@@ -51,36 +72,36 @@ msgstr "<span foreground=\\\"red\\\">[Chýbajúci obrázok]</span>"
 msgid "Unknown data type"
 msgstr "Neznámy dátový typ"
 
-#: ../src/mstardict.cpp:305
+#: ../src/mstardict.cpp:319
 msgid "Searching"
 msgstr "Hľadám"
 
-#: ../src/mstardict.cpp:307
+#: ../src/mstardict.cpp:321
 msgid "Cancel"
 msgstr "Zrušiť"
 
-#: ../src/mstardict.cpp:341
+#: ../src/mstardict.cpp:355
 msgid "MStardict"
 msgstr "Slovník"
 
 #. no_search_result label
-#: ../src/mstardict.cpp:358 ../src/mstardict.cpp:554
+#: ../src/mstardict.cpp:372 ../src/mstardict.cpp:568
 msgid "No search result"
 msgstr "Žiadne výsledky hľadania"
 
-#: ../src/mstardict.cpp:465
+#: ../src/mstardict.cpp:479
 msgid "Download dictionaries"
 msgstr "Stiahnuť slovníky"
 
-#: ../src/mstardict.cpp:471 ../src/prefsdlg.cpp:66
+#: ../src/mstardict.cpp:485 ../src/prefsdlg.cpp:66
 msgid "Preferences"
 msgstr "Predvoľby"
 
-#: ../src/mstardict.cpp:477
+#: ../src/mstardict.cpp:491
 msgid "Quit"
 msgstr "Zavrieť"
 
-#: ../src/mstardict.cpp:567
+#: ../src/mstardict.cpp:581
 msgid "No loaded dictionary"
 msgstr "Žiadne načítané slovníky"
 

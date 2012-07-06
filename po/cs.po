@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mstardict\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-06-02 04:54+0000\n"
+"POT-Creation-Date: 2012-07-05 11:53+0400\n"
 "PO-Revision-Date: 2010-06-14 20:52+0200\n"
 "Last-Translator: Pavel Fric\n"
 "Language-Team: Czech <kde-i18n-doc@kde.org>\n"
@@ -16,9 +16,30 @@ msgstr ""
 "X-Generator: Lokalize 1.0\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 
-#: ../src/dictmngr.cpp:98 ../src/mstardict.cpp:473
+#: ../src/dictmngr.cpp:100 ../src/mstardict.cpp:473
 msgid "Dictionaries"
 msgstr "Slovníky"
+
+#: ../src/dictmngr.cpp:101 ../src/dictmngr.cpp:225
+msgid "Reorder"
+msgstr ""
+
+#: ../src/dictmngr.cpp:226
+msgid "First"
+msgstr ""
+
+#: ../src/dictmngr.cpp:227
+msgid "Up"
+msgstr ""
+
+#: ../src/dictmngr.cpp:228
+msgid "Down"
+msgstr ""
+
+#: ../src/dictmngr.cpp:229
+#, fuzzy
+msgid "Last"
+msgstr "Latinský"
 
 #: ../src/libwrapper.cpp:126
 msgid "XDXF data parsing plug-in is not found!"
@@ -42,8 +63,7 @@ msgstr "Přídavný modul pro zpracovávaní dat WordNet nebyl nalezen!"
 
 #: ../src/libwrapper.cpp:192
 msgid "<span foreground=\"red\">[Load image error!]</span>"
-msgstr ""
-"<span foreground=\\\"red\\\">[Chyba při nahrávání obrázku!]</span>"
+msgstr "<span foreground=\\\"red\\\">[Chyba při nahrávání obrázku!]</span>"
 
 #: ../src/libwrapper.cpp:196
 msgid "<span foreground=\"red\">[Missing Image]</span>"
@@ -329,4 +349,3 @@ msgstr "Žena"
 #: ../src/tts.cpp:288
 msgid "Language"
 msgstr "Jazyk"
-

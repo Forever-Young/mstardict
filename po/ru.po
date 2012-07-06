@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mstardict\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-08-01 05:44+0000\n"
+"POT-Creation-Date: 2012-07-05 11:53+0400\n"
 "PO-Revision-Date: 2010-08-02 02:02+0400\n"
 "Last-Translator: Alexey Gavrilov <tehhez@gmail.com>\n"
 "Language-Team: \n"
@@ -16,9 +16,29 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../src/dictmngr.cpp:98 ../src/mstardict.cpp:473
+#: ../src/dictmngr.cpp:100 ../src/mstardict.cpp:473
 msgid "Dictionaries"
 msgstr "Словари"
+
+#: ../src/dictmngr.cpp:101 ../src/dictmngr.cpp:225
+msgid "Reorder"
+msgstr "Порядок"
+
+#: ../src/dictmngr.cpp:226
+msgid "First"
+msgstr "Первый"
+
+#: ../src/dictmngr.cpp:227
+msgid "Up"
+msgstr "Вверх"
+
+#: ../src/dictmngr.cpp:228
+msgid "Down"
+msgstr "Вниз"
+
+#: ../src/dictmngr.cpp:229
+msgid "Last"
+msgstr "Последний"
 
 #: ../src/libwrapper.cpp:126
 msgid "XDXF data parsing plug-in is not found!"
@@ -67,7 +87,7 @@ msgstr "MStardict"
 #. no_search_result label
 #: ../src/mstardict.cpp:372 ../src/mstardict.cpp:568
 msgid "No search result"
-msgstr "Ничего не найдено"
+msgstr "Нет результатов поиска"
 
 #: ../src/mstardict.cpp:479
 msgid "Download dictionaries"

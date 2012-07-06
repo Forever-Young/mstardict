@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.5-2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-17 04:18+0000\n"
+"POT-Creation-Date: 2012-07-05 11:53+0400\n"
 "PO-Revision-Date: 2010-05-17 11:31+0200\n"
 "Last-Translator: Marko Vertainen <marko.vertainen@iki.fi>\n"
 "Language-Team: FINNISH <FI@li.org>\n"
@@ -15,10 +15,30 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../src/dictmngr.cpp:98
-#: ../src/mstardict.cpp:473
+#: ../src/dictmngr.cpp:100 ../src/mstardict.cpp:473
 msgid "Dictionaries"
 msgstr "Sanakirjat"
+
+#: ../src/dictmngr.cpp:101 ../src/dictmngr.cpp:225
+msgid "Reorder"
+msgstr ""
+
+#: ../src/dictmngr.cpp:226
+msgid "First"
+msgstr ""
+
+#: ../src/dictmngr.cpp:227
+msgid "Up"
+msgstr ""
+
+#: ../src/dictmngr.cpp:228
+msgid "Down"
+msgstr ""
+
+#: ../src/dictmngr.cpp:229
+#, fuzzy
+msgid "Last"
+msgstr "Latina"
 
 #: ../src/libwrapper.cpp:126
 msgid "XDXF data parsing plug-in is not found!"
@@ -65,8 +85,7 @@ msgid "MStardict"
 msgstr "MStardict"
 
 #. no_search_result label
-#: ../src/mstardict.cpp:372
-#: ../src/mstardict.cpp:568
+#: ../src/mstardict.cpp:372 ../src/mstardict.cpp:568
 msgid "No search result"
 msgstr "Ei hakutuloksia"
 
@@ -74,8 +93,7 @@ msgstr "Ei hakutuloksia"
 msgid "Download dictionaries"
 msgstr "Hae sanakirjoja"
 
-#: ../src/mstardict.cpp:485
-#: ../src/prefsdlg.cpp:66
+#: ../src/mstardict.cpp:485 ../src/prefsdlg.cpp:66
 msgid "Preferences"
 msgstr "Asetukset"
 
@@ -330,4 +348,3 @@ msgstr "Nainen"
 #: ../src/tts.cpp:288
 msgid "Language"
 msgstr "Kieli"
-

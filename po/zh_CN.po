@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mstardict\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-19 18:23+0100\n"
+"POT-Creation-Date: 2012-07-05 11:53+0400\n"
 "PO-Revision-Date: 2010-10-19 19:45+0800\n"
 "Last-Translator: GreyAir <greyair@gmail.com>\n"
 "Language-Team: \n"
@@ -13,10 +13,30 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../src/dictmngr.cpp:98
-#: ../src/mstardict.cpp:459
+#: ../src/dictmngr.cpp:100 ../src/mstardict.cpp:473
 msgid "Dictionaries"
 msgstr "词典"
+
+#: ../src/dictmngr.cpp:101 ../src/dictmngr.cpp:225
+msgid "Reorder"
+msgstr ""
+
+#: ../src/dictmngr.cpp:226
+msgid "First"
+msgstr ""
+
+#: ../src/dictmngr.cpp:227
+msgid "Up"
+msgstr ""
+
+#: ../src/dictmngr.cpp:228
+msgid "Down"
+msgstr ""
+
+#: ../src/dictmngr.cpp:229
+#, fuzzy
+msgid "Last"
+msgstr "拉丁语"
 
 #: ../src/libwrapper.cpp:126
 msgid "XDXF data parsing plug-in is not found!"
@@ -50,38 +70,36 @@ msgstr "<span foreground=\\\"red\\\">[缺少图像]</span>"
 msgid "Unknown data type"
 msgstr "未知的数据类型"
 
-#: ../src/mstardict.cpp:305
+#: ../src/mstardict.cpp:319
 msgid "Searching"
 msgstr "搜索"
 
-#: ../src/mstardict.cpp:307
+#: ../src/mstardict.cpp:321
 msgid "Cancel"
 msgstr "取消"
 
-#: ../src/mstardict.cpp:341
+#: ../src/mstardict.cpp:355
 msgid "MStardict"
 msgstr "词典"
 
 #. no_search_result label
-#: ../src/mstardict.cpp:358
-#: ../src/mstardict.cpp:554
+#: ../src/mstardict.cpp:372 ../src/mstardict.cpp:568
 msgid "No search result"
 msgstr "无搜索结果"
 
-#: ../src/mstardict.cpp:465
+#: ../src/mstardict.cpp:479
 msgid "Download dictionaries"
 msgstr "下载词库"
 
-#: ../src/mstardict.cpp:471
-#: ../src/prefsdlg.cpp:66
+#: ../src/mstardict.cpp:485 ../src/prefsdlg.cpp:66
 msgid "Preferences"
 msgstr "偏好设置"
 
-#: ../src/mstardict.cpp:477
+#: ../src/mstardict.cpp:491
 msgid "Quit"
 msgstr "退出"
 
-#: ../src/mstardict.cpp:567
+#: ../src/mstardict.cpp:581
 msgid "No loaded dictionary"
 msgstr "没有载入词库"
 
@@ -328,4 +346,3 @@ msgstr "女性"
 #: ../src/tts.cpp:288
 msgid "Language"
 msgstr "语言"
-
