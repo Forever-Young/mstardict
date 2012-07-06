@@ -1,3 +1,11 @@
+mstardict (0.7-1) unstable; urgency=low
+
+  * Added ability to reorder dictionaries.
+  * Fixed Russian translation.
+  * Changed "blue" color to "lightblue" in rendering word articles.
+
+ -- Anton Novosyolov <anton.novosyolov@gmail.com>  Thu,  5 May 2012 15:40:26 +0400
+
 mstardict (0.6-4) unstable; urgency=low
 
   * Fixed installation of Czech translation.
