@@ -87,6 +87,8 @@ DictMngr::CreateDictMngrDialog()
     std::list < std::string > all_dict_list;
     std::list < std::string > selected_dict_list;
     GtkListStore *dict_list = NULL;
+    const gint RESPONSE_REORDER = 1;
+    gint response;
 
     dict_list = gtk_list_store_new(N_DICT_INFO_COLUMNS,
 				   G_TYPE_STRING,	/* bookname */
@@ -96,6 +98,7 @@ DictMngr::CreateDictMngrDialog()
     dialog = gtk_dialog_new();
     gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);
     gtk_window_set_title(GTK_WINDOW(dialog), _("Dictionaries"));
+    gtk_dialog_add_button(GTK_DIALOG(dialog), _("Reorder"), RESPONSE_REORDER);
     gtk_dialog_add_button(GTK_DIALOG(dialog), "OK", GTK_RESPONSE_ACCEPT);
     gtk_window_set_default_size(GTK_WINDOW(dialog), -1, 400);
 
@@ -159,7 +162,8 @@ DictMngr::CreateDictMngrDialog()
     gtk_widget_show_all(GTK_WIDGET(dialog));
 
     /* run the dialog */
-    if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
+    response = gtk_dialog_run(GTK_DIALOG(dialog));
+    if (response == GTK_RESPONSE_ACCEPT || response == RESPONSE_REORDER) {
 	GList *selected_dicts = NULL;
 
 	selected_dicts =
@@ -187,6 +191,144 @@ DictMngr::CreateDictMngrDialog()
 	}
     }
     gtk_widget_destroy(GTK_WIDGET(dialog));
+    if (response == RESPONSE_REORDER) {
+        CreateReorderDialog();
+    }
+}
+
+void
+DictMngr::CreateReorderDialog()
+{
+    GtkWidget *dialog, *selector;
+    GtkCellRenderer *renderer;
+    HildonTouchSelectorColumn *column;
+    GtkTreeModel *tree_model;
+    GtkTreeIter iter, iter2;
+    GtkTreePath *path;
+    gboolean iter_valid = TRUE;
+    std::list < std::string > selected_dict_list;
+    GtkListStore *dict_list = NULL;
+    const gint RESPONSE_FIRST = 1;
+    const gint RESPONSE_UP = 2;
+    const gint RESPONSE_DOWN = 3;
+    const gint RESPONSE_LAST = 4;
+    gint response;
+
+    dict_list = gtk_list_store_new(N_DICT_INFO_COLUMNS,
+				   G_TYPE_STRING,	/* bookname */
+				   G_TYPE_STRING);	/* filename */
+
+    /* create dialog */
+    dialog = gtk_dialog_new();
+    gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);
+    gtk_window_set_title(GTK_WINDOW(dialog), _("Reorder"));
+    gtk_dialog_add_button(GTK_DIALOG(dialog), _("First"), RESPONSE_FIRST);
+    gtk_dialog_add_button(GTK_DIALOG(dialog), _("Up"), RESPONSE_UP);
+    gtk_dialog_add_button(GTK_DIALOG(dialog), _("Down"), RESPONSE_DOWN);
+    gtk_dialog_add_button(GTK_DIALOG(dialog), _("Last"), RESPONSE_LAST);
+    gtk_dialog_add_button(GTK_DIALOG(dialog), "OK", GTK_RESPONSE_ACCEPT);
+    gtk_window_set_default_size(GTK_WINDOW(dialog), -1, 400);
+
+    /* dictionary selector */
+    selector = hildon_touch_selector_new();
+    gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), selector);
+
+    renderer = gtk_cell_renderer_text_new();
+    g_object_set(G_OBJECT(renderer),
+		 "xpad", 10,
+		 "ellipsize", PANGO_ELLIPSIZE_END,
+		 "ellipsize-set", TRUE,
+		 NULL);
+
+    column =
+	hildon_touch_selector_append_column(HILDON_TOUCH_SELECTOR
+					    (selector),
+					    GTK_TREE_MODEL(dict_list),
+					    renderer, "text", BOOKNAME_DICT_INFO_COLUMN, NULL);
+    hildon_touch_selector_column_set_text_column(column, 0);
+
+    /* fill list with selected dictionaries */
+    oStarDict->oConf->GetStringList("/apps/maemo/mstardict/dict_list", selected_dict_list);
+    for (std::list < std::string >::iterator i = selected_dict_list.begin();
+	 i != selected_dict_list.end(); ++i) {
+	DictInfo dictinfo;
+
+	dictinfo.load_from_ifo_file(i->c_str(), 0);
+	gtk_list_store_append(dict_list, &iter);
+	gtk_list_store_set(dict_list, &iter,
+			   BOOKNAME_DICT_INFO_COLUMN,
+			   dictinfo.bookname.c_str(), FILENAME_DICT_INFO_COLUMN, i->c_str(), -1);
+    }
+    g_object_unref(dict_list);
+
+    /* show dialog */
+    gtk_widget_show_all(GTK_WIDGET(dialog));
+
+    /* run the dialog */
+    while (TRUE) {
+        response = gtk_dialog_run(GTK_DIALOG(dialog));
+        switch(response) {
+        case RESPONSE_FIRST:
+            tree_model = hildon_touch_selector_get_model(HILDON_TOUCH_SELECTOR(selector), BOOKNAME_DICT_INFO_COLUMN);
+            if (hildon_touch_selector_get_selected(HILDON_TOUCH_SELECTOR(selector), BOOKNAME_DICT_INFO_COLUMN, &iter)) {
+                gtk_list_store_move_after(GTK_LIST_STORE(tree_model), &iter, NULL);
+                hildon_touch_selector_center_on_selected(HILDON_TOUCH_SELECTOR(selector));
+            }
+            break;
+        case RESPONSE_UP:
+            tree_model = hildon_touch_selector_get_model(HILDON_TOUCH_SELECTOR(selector), BOOKNAME_DICT_INFO_COLUMN);
+            if (hildon_touch_selector_get_selected(HILDON_TOUCH_SELECTOR(selector), BOOKNAME_DICT_INFO_COLUMN, &iter)) {
+                path = gtk_tree_model_get_path(tree_model, &iter);
+                gtk_tree_path_prev(path);
+                if (gtk_tree_model_get_iter(tree_model, &iter2, path)) {
+                    gtk_list_store_swap(GTK_LIST_STORE(tree_model), &iter, &iter2);
+                }
+                gtk_tree_path_free(path);
+                hildon_touch_selector_center_on_selected(HILDON_TOUCH_SELECTOR(selector));
+            }
+            break;
+        case RESPONSE_DOWN:
+            tree_model = hildon_touch_selector_get_model(HILDON_TOUCH_SELECTOR(selector), BOOKNAME_DICT_INFO_COLUMN);
+            if (hildon_touch_selector_get_selected(HILDON_TOUCH_SELECTOR(selector), BOOKNAME_DICT_INFO_COLUMN, &iter)) {
+                path = gtk_tree_model_get_path(tree_model, &iter);
+                gtk_tree_path_next(path);
+                if (gtk_tree_model_get_iter(tree_model, &iter2, path)) {
+                    gtk_list_store_swap(GTK_LIST_STORE(tree_model), &iter, &iter2);
+                }
+                gtk_tree_path_free(path);
+                hildon_touch_selector_center_on_selected(HILDON_TOUCH_SELECTOR(selector));
+            }
+            break;
+        case RESPONSE_LAST:
+            tree_model = hildon_touch_selector_get_model(HILDON_TOUCH_SELECTOR(selector), BOOKNAME_DICT_INFO_COLUMN);
+            if (hildon_touch_selector_get_selected(HILDON_TOUCH_SELECTOR(selector), BOOKNAME_DICT_INFO_COLUMN, &iter)) {
+                gtk_list_store_move_before(GTK_LIST_STORE(tree_model), &iter, NULL);
+                hildon_touch_selector_center_on_selected(HILDON_TOUCH_SELECTOR(selector));
+            }
+            break;
+        case GTK_RESPONSE_ACCEPT:
+            tree_model = hildon_touch_selector_get_model(HILDON_TOUCH_SELECTOR(selector), BOOKNAME_DICT_INFO_COLUMN);
+            iter_valid = gtk_tree_model_get_iter_first(tree_model, &iter);
+            selected_dict_list.clear();
+            while (iter_valid) {
+                const gchar *filename;
+                gtk_tree_model_get(GTK_TREE_MODEL(tree_model), &iter,
+                                   FILENAME_DICT_INFO_COLUMN, &filename, -1);
+                selected_dict_list.push_back(std::string(filename));
+
+                iter_valid = gtk_tree_model_iter_next(tree_model, &iter);
+            }
+            if (oStarDict->oConf->SetStringList("/apps/maemo/mstardict/dict_list", selected_dict_list)) {
+                /* reload dictionaries */
+                ReLoadDictionaries(selected_dict_list);
+            }
+            gtk_widget_destroy(GTK_WIDGET(dialog));
+            return;
+        default:
+            gtk_widget_destroy(GTK_WIDGET(dialog));
+            return;
+        }
+    }
 }
 
 void
@@ -201,6 +343,8 @@ DictMngr::GetAllDictionaryList(std::list < std::string > &dict_list)
 
     /* stardict dictionary directory */
     dicts_dir_list.push_back(std::string(STARDICT_DICT_DIR));
+
+    oStarDict->oConf->GetStringList("/apps/maemo/mstardict/dict_list", order_list);
     for_each_file(dicts_dir_list, ".ifo", order_list, disable_list, GetAllDictList(dict_list));
 }
 

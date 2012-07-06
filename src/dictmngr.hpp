@@ -34,6 +34,7 @@ class DictMngr {
     ~DictMngr();
 
     void CreateDictMngrDialog();
+    void CreateReorderDialog();
     void GetAllDictionaryList(std::list < std::string > &dict_list);
     void LoadDictionaries();
     void ReLoadDictionaries(std::list < std::string > &dict_list);
