@@ -333,7 +333,7 @@ static void html2result(const char *p, ParseResult &result)
 			if (!next) {
 				continue;
 			}
-			res += "<span foreground=\"blue\" underline=\"single\">";
+			res += "<span foreground=\"lightblue\" underline=\"single\">";
 			std::string::size_type link_len = next - p;
 			std::string chunk(p, link_len);
 			html_topango(chunk, pango, pango_len);
@@ -349,7 +349,7 @@ static void html2result(const char *p, ParseResult &result)
 				continue;
 			}
 			p+=5;
-			res += "<span foreground=\"blue\" underline=\"single\">";
+			res += "<span foreground=\"lightblue\" underline=\"single\">";
 			std::string::size_type link_len = next - p;
 			std::string chunk(p, link_len);
 			html_topango(chunk, pango, pango_len);

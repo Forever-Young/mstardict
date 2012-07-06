@@ -149,7 +149,7 @@ string parse_data(const gchar *data,
 	    p++;
 	    sec_size = strlen(p);
 	    if (sec_size) {
-		mark += "[<span foreground=\"blue\">";
+		mark += "[<span foreground=\"lightblue\">";
 		gchar *m_str = g_markup_escape_text(p, sec_size);
 		mark += m_str;
 		g_free(m_str);

@@ -270,7 +270,7 @@ static void powerword_markup_add_text(const gchar *text, gssize length, std::str
 								next = n+1;
 								break;
 							case 'x':
-								g_string_append (str, "<span foreground=\"blue\" underline=\"single\">");
+								g_string_append (str, "<span foreground=\"lightblue\" underline=\"single\">");
 								next = n+1;
 								break;
 							case 'X':
@@ -283,7 +283,7 @@ static void powerword_markup_add_text(const gchar *text, gssize length, std::str
 									else
 										tag_end++;
 								}
-								g_string_append (str, "<span foreground=\"blue\">");
+								g_string_append (str, "<span foreground=\"lightblue\">");
 								gchar *tag_str;
 								if (*next == 'X') {
 									tag_str = toUtfPhonetic(n+1, tag_end - (n+1));
@@ -308,7 +308,7 @@ static void powerword_markup_add_text(const gchar *text, gssize length, std::str
 								if (previous_islink)
 									g_string_append (str, "\t");
 								if (*next == 'l' || *next == 'D')
-									g_string_append (str, "<span foreground=\"blue\" underline=\"single\">");
+									g_string_append (str, "<span foreground=\"lightblue\" underline=\"single\">");
 								else
 									g_string_append (str, "<span foreground=\"#008080\" underline=\"single\">");
 								*pango += str->str;
@@ -443,7 +443,7 @@ static void func_parse_passthrough(GMarkupParseContext *context, const gchar *pa
 			*pango+='\n';
 			cur_pos++;
 		}
-		*pango+="[<span foreground=\"blue\">";
+		*pango+="[<span foreground=\"lightblue\">";
 		cur_pos++;
 		gchar *str = toUtfPhonetic(text, len);
 		*pango+=str;
@@ -478,7 +478,7 @@ static void func_parse_passthrough(GMarkupParseContext *context, const gchar *pa
 			*pango+='\n';
 			cur_pos++;
 		}
-		*pango+="<span foreground=\"blue\" underline=\"single\">";
+		*pango+="<span foreground=\"lightblue\" underline=\"single\">";
 		powerword_markup_add_text(text, len, pango, cur_pos, ((PwUserData*)user_data)->links_list);
 		*pango+="</span>";
 	} else if (strcmp(element, "例句原型")==0) {
@@ -548,28 +548,28 @@ static void func_parse_start_element(GMarkupParseContext *context, const gchar *
 		if (((PwUserData*)user_data)->first_jbcy) {
 			((PwUserData*)user_data)->first_jbcy = false;
 		} else {
-			res="\n<span foreground=\"blue\">&lt;基本词义&gt;</span>";
+			res="\n<span foreground=\"lightblue\">&lt;基本词义&gt;</span>";
 		}
 	} else if (strcmp(element_name, "继承用法")==0) {
-		res="\n<span foreground=\"blue\">&lt;继承用法&gt;</span>";
+		res="\n<span foreground=\"lightblue\">&lt;继承用法&gt;</span>";
 	} else if (strcmp(element_name, "习惯用语")==0) {
-		res="\n<span foreground=\"blue\">&lt;习惯用语&gt;</span>";
+		res="\n<span foreground=\"lightblue\">&lt;习惯用语&gt;</span>";
 	} else if (strcmp(element_name, "词性变化")==0) {
-		res="\n<span foreground=\"blue\">&lt;词性变化&gt;</span>";
+		res="\n<span foreground=\"lightblue\">&lt;词性变化&gt;</span>";
 	} else if (strcmp(element_name, "特殊用法")==0) {
-		res="\n<span foreground=\"blue\">&lt;特殊用法&gt;</span>";
+		res="\n<span foreground=\"lightblue\">&lt;特殊用法&gt;</span>";
 	} else if (strcmp(element_name, "参考词汇")==0) {
-		res="\n<span foreground=\"blue\">&lt;参考词汇&gt;</span>";
+		res="\n<span foreground=\"lightblue\">&lt;参考词汇&gt;</span>";
 	} else if (strcmp(element_name, "常用词组")==0) {
-		res="\n<span foreground=\"blue\">&lt;常用词组&gt;</span>";
+		res="\n<span foreground=\"lightblue\">&lt;常用词组&gt;</span>";
 	} else if (strcmp(element_name, "语源")==0) {
-		res="\n<span foreground=\"blue\">&lt;语源&gt;</span>";
+		res="\n<span foreground=\"lightblue\">&lt;语源&gt;</span>";
 	} else if (strcmp(element_name, "派生")==0) {
-		res="\n<span foreground=\"blue\">&lt;派生&gt;</span>";
+		res="\n<span foreground=\"lightblue\">&lt;派生&gt;</span>";
 	} else if (strcmp(element_name, "用法")==0) {
-		res="\n<span foreground=\"blue\">&lt;用法&gt;</span>";
+		res="\n<span foreground=\"lightblue\">&lt;用法&gt;</span>";
 	} else if (strcmp(element_name, "注释")==0) {
-		res="\n<span foreground=\"blue\">&lt;注释&gt;</span>";
+		res="\n<span foreground=\"lightblue\">&lt;注释&gt;</span>";
 	}
 	if (!res.empty()) {
 		*(((PwUserData*)user_data)->pango) += res;

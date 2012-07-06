@@ -17,7 +17,7 @@ static void wikixml_parse_start_element(GMarkupParseContext *context, const gcha
 {
 	WikiXmlParseUserData *Data = (WikiXmlParseUserData *)user_data;
 	if (strcmp(element_name, "wikilink")==0) {
-		Data->res->append("<span foreground=\"blue\" underline=\"single\">");
+		Data->res->append("<span foreground=\"lightblue\" underline=\"single\">");
 	}
 }
 

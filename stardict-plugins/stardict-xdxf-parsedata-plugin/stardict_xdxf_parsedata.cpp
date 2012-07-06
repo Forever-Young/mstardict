@@ -139,7 +139,7 @@ static void xdxf2result(const char *p, ParseResult &result)
 					if (*(next + 4) == '\n')
 						next++;
 				} else {
-					res += "<span foreground=\"blue\">";
+					res += "<span foreground=\"lightblue\">";
 					std::string chunk(p+3, next-(p+3));
 					res += chunk;
 					size_t xml_len = xml_strlen(chunk);
@@ -169,7 +169,7 @@ static void xdxf2result(const char *p, ParseResult &result)
 				else
 					res += "<span>";
 			} else
-				res += "<span foreground=\"blue\">";
+				res += "<span foreground=\"lightblue\">";
 			p = next + 1;
 		} else if (*(p + 1) == 'r' && *(p + 2) == 'r' && *(p + 3) == 'e' && *(p + 4) == 'f' && (*(p + 5) == ' ' || *(p + 5) == '>')) {
 			next = strchr(p, '>');
@@ -251,7 +251,7 @@ static void xdxf2result(const char *p, ParseResult &result)
 			if (!next)
 				continue;
 
-			res += "<span foreground=\"blue\" underline=\"single\">";
+			res += "<span foreground=\"lightblue\" underline=\"single\">";
 			std::string::size_type link_len = next - p;
 			std::string chunk(p, link_len);
 			size_t xml_len = xml_strlen(chunk);
